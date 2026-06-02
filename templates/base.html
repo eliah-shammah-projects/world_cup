@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Copa do Mundo 2026{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Design system Panini — carrega PRIMEIRO -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='globals.css') }}">
+  <!-- Estilos funcionais existentes — sobrescreve onde há conflito -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<nav class="navbar-panini">
+  <div class="nav-panini-inner">
+    <a href="{{ url_for('index') }}" class="nav-panini-brand">
+      Copa <span class="nav-panini-brand-year">2026</span>
+    </a>
+    <ul class="nav-panini-links">
+      <li><a href="{{ url_for('index') }}" {% if request.endpoint == 'index' %}class="active"{% endif %}>Início</a></li>
+      <li><a href="{{ url_for('grupos') }}" {% if request.endpoint == 'grupos' %}class="active"{% endif %}>Simulador</a></li>
+    </ul>
+    <button class="nav-panini-toggle" onclick="toggleMenu()">☰</button>
+  </div>
+</nav>
+
+<main>
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="footer-panini">
+  <div class="container">
+    <p>⚽ Simulador Copa do Mundo FIFA 2026 — EUA, Canadá &amp; México</p>
+    <p class="footer-panini-sub">48 seleções · 12 grupos · 16 estádios · 104 jogos</p>
+  </div>
+</footer>
+
+<script>
+function toggleMenu() {
+  document.querySelector('.nav-panini-links').classList.toggle('open');
+}
+</script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

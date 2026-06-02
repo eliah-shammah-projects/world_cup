@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ nome }} — Campeão Copa 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body {
+      background-color: #1a0d04;
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='250'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='250' height='250' filter='url(%23p)' opacity='0.035'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-size: 250px 250px;
+      font-family: 'Libre Baskerville', Georgia, serif;
+      color: #f5ead4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      position: relative;
+      animation: fade-bg 0.6s ease both;
+    }
+
+    @keyframes fade-bg {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    /* ── Silhueta ── */
+    .silhueta {
+      position: fixed;
+      right: -1vw;
+      bottom: 0;
+      height: 88vh;
+      color: #f5ead4;
+      opacity: 0.04;
+      pointer-events: none;
+      animation: flutuar 4.5s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+    }
+
+    @keyframes flutuar {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-12px); }
+    }
+
+    /* ── Confetes ── */
+    .confetes {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 5;
+      overflow: hidden;
+    }
+
+    .c {
+      position: absolute;
+      top: -14px;
+      border-radius: 2px;
+      animation: cair linear infinite;
+    }
+
+    @keyframes cair {
+      0%   { transform: translateY(-14px) rotate(0deg); opacity: 1; }
+      85%  { opacity: 0.6; }
+      100% { transform: translateY(110vh) rotate(var(--rot)); opacity: 0; }
+    }
+
+    /* ── Stage ── */
+    .vitoria-stage {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding: 3rem 2rem;
+      max-width: 680px;
+      width: 100%;
+      animation: entrada 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both;
+    }
+
+    @keyframes entrada {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .linha-topo {
+      width: 80px;
+      height: 1.5px;
+      background: #c9a012;
+      margin: 0 auto 2.4rem;
+      opacity: 0.7;
+    }
+
+    .vitoria-label {
+      font-family: 'Libre Baskerville', serif;
+      font-style: italic;
+      font-weight: 400;
+      font-size: 1rem;
+      letter-spacing: 0.08em;
+      color: rgba(245, 234, 212, 0.55);
+      margin-top: 3.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .vitoria-bandeira {
+      margin: 0 auto 1.8rem;
+      width: 110px;
+      height: 74px;
+      overflow: hidden;
+      border-radius: 4px;
+      box-shadow: 0 0 0 1px rgba(201,160,18,0.3), 0 8px 32px rgba(0,0,0,0.5);
+    }
+
+    .vitoria-bandeira img {
+      width: 110px;
+      height: auto;
+      display: block;
+    }
+
+    .vitoria-nome {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-weight: 400;
+      font-size: clamp(3.4rem, 11vw, 8.5rem);
+      letter-spacing: 0.12em;
+      color: #f5ead4;
+      line-height: 1;
+      margin-bottom: 2.4rem;
+      text-shadow: 0 2px 40px rgba(201,160,18,0.12);
+    }
+
+    .vitoria-taca {
+      margin: 0 auto 2rem;
+      width: 130px;
+      animation: brilho-taca 2.8s cubic-bezier(0.45,0,.55,1) infinite;
+    }
+
+    .vitoria-taca img {
+      width: 130px;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+
+    @keyframes brilho-taca {
+      0%, 100% { filter: drop-shadow(0 4px 24px rgba(201,160,18,0.35)); }
+      50%       { filter: drop-shadow(0 8px 36px rgba(201,160,18,0.75)); }
+    }
+
+    .vitoria-linha {
+      width: 48px;
+      height: 1px;
+      background: rgba(201,160,18,0.45);
+      margin: 0 auto 1.6rem;
+    }
+
+    .vitoria-footer {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 0.62rem;
+      letter-spacing: 0.38em;
+      text-transform: uppercase;
+      color: rgba(245,234,212,0.28);
+      margin-bottom: 2.8rem;
+    }
+
+    .vitoria-back {
+      display: inline-block;
+      font-family: 'Libre Baskerville', serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      color: rgba(245,234,212,0.38);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(245,234,212,0.15);
+      padding-bottom: 2px;
+      transition: color 300ms ease, border-color 300ms ease;
+    }
+
+    .vitoria-back:hover {
+      color: rgba(245,234,212,0.75);
+      border-color: rgba(245,234,212,0.4);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Silhueta -->
+  <svg class="silhueta" viewBox="0 0 260 440" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <ellipse cx="118" cy="36" rx="26" ry="30"/>
+    <rect x="108" y="62" width="20" height="18" rx="5"/>
+    <path d="M72 82 Q95 76 118 80 Q148 84 158 94 L144 172 Q126 182 108 180 Q90 178 80 166 Z"/>
+    <path d="M80 102 Q56 82 40 58 Q35 50 44 45 Q52 40 57 50 Q72 74 90 96 Z"/>
+    <path d="M158 98 Q184 108 210 112 Q220 115 218 124 Q216 133 206 129 Q180 122 152 108 Z"/>
+    <path d="M88 174 Q80 210 76 244 Q72 268 82 280 Q92 292 104 282 Q112 272 108 252 Q112 226 120 198 Z"/>
+    <ellipse cx="86" cy="279" rx="22" ry="11" transform="rotate(-8 86 279)"/>
+    <path d="M142 174 Q154 196 170 218 Q188 242 214 256 Q226 263 230 254 Q234 245 222 238 Q200 225 182 202 Q166 180 154 162 Z"/>
+    <ellipse cx="224" cy="252" rx="24" ry="12" transform="rotate(28 224 252)"/>
+    <circle cx="254" cy="270" r="22"/>
+  </svg>
+
+  <!-- Confetes -->
+  <div class="confetes" aria-hidden="true">
+    <span class="c" style="--rot:480deg; left:4%;  width:7px;  height:14px; background:#c94a1a; animation-duration:5.2s; animation-delay:0s;"></span>
+    <span class="c" style="--rot:320deg; left:9%;  width:6px;  height:6px;  background:#c9a012; border-radius:50%; animation-duration:4.1s; animation-delay:0.8s;"></span>
+    <span class="c" style="--rot:600deg; left:16%; width:9px;  height:9px;  background:#1a4a8a; animation-duration:6.8s; animation-delay:0.3s;"></span>
+    <span class="c" style="--rot:280deg; left:22%; width:5px;  height:11px; background:#f5ead4; animation-duration:5.9s; animation-delay:1.5s;"></span>
+    <span class="c" style="--rot:720deg; left:29%; width:8px;  height:8px;  background:#c94a1a; border-radius:50%; animation-duration:4.7s; animation-delay:0.1s;"></span>
+    <span class="c" style="--rot:410deg; left:35%; width:6px;  height:13px; background:#c9a012; animation-duration:7.2s; animation-delay:2.1s;"></span>
+    <span class="c" style="--rot:540deg; left:41%; width:10px; height:10px; background:#1a4a8a; animation-duration:5.5s; animation-delay:0.6s;"></span>
+    <span class="c" style="--rot:300deg; left:48%; width:5px;  height:10px; background:#f5ead4; animation-duration:3.9s; animation-delay:1.2s;"></span>
+    <span class="c" style="--rot:660deg; left:54%; width:7px;  height:7px;  background:#c94a1a; border-radius:50%; animation-duration:6.1s; animation-delay:0.4s;"></span>
+    <span class="c" style="--rot:380deg; left:60%; width:9px;  height:5px;  background:#c9a012; animation-duration:4.8s; animation-delay:1.8s;"></span>
+    <span class="c" style="--rot:500deg; left:66%; width:6px;  height:12px; background:#1a4a8a; animation-duration:7.5s; animation-delay:0.2s;"></span>
+    <span class="c" style="--rot:250deg; left:71%; width:8px;  height:8px;  background:#f5ead4; border-radius:50%; animation-duration:5.3s; animation-delay:2.4s;"></span>
+    <span class="c" style="--rot:620deg; left:77%; width:5px;  height:9px;  background:#c94a1a; animation-duration:4.4s; animation-delay:0.9s;"></span>
+    <span class="c" style="--rot:440deg; left:83%; width:10px; height:6px;  background:#c9a012; animation-duration:6.6s; animation-delay:1.1s;"></span>
+    <span class="c" style="--rot:360deg; left:88%; width:7px;  height:14px; background:#1a4a8a; animation-duration:5.0s; animation-delay:0.5s;"></span>
+    <span class="c" style="--rot:580deg; left:93%; width:6px;  height:6px;  background:#f5ead4; border-radius:50%; animation-duration:4.2s; animation-delay:1.7s;"></span>
+    <span class="c" style="--rot:470deg; left:13%; width:8px;  height:11px; background:#c9a012; animation-duration:8.1s; animation-delay:3.0s;"></span>
+    <span class="c" style="--rot:310deg; left:52%; width:6px;  height:6px;  background:#c94a1a; border-radius:50%; animation-duration:3.7s; animation-delay:2.8s;"></span>
+    <span class="c" style="--rot:690deg; left:73%; width:9px;  height:9px;  background:#1a4a8a; animation-duration:6.3s; animation-delay:1.4s;"></span>
+    <span class="c" style="--rot:420deg; left:38%; width:5px;  height:13px; background:#f5ead4; animation-duration:7.8s; animation-delay:0.7s;"></span>
+  </div>
+
+  <!-- Conteúdo -->
+  <div class="vitoria-stage">
+
+    <div class="linha-topo"></div>
+
+    <div class="vitoria-label">Campeão do Mundo</div>
+
+    <div class="vitoria-bandeira">
+      <img src="{{ info.get('bandeira', '') }}" alt="{{ nome }}">
+    </div>
+
+    <h1 class="vitoria-nome">{{ nome }}</h1>
+
+    <div class="vitoria-taca">
+      <img src="{{ url_for('static', filename='img/taca.png.jpg') }}" alt="Taça da Copa do Mundo">
+    </div>
+
+    <div class="vitoria-linha"></div>
+
+    <div class="vitoria-footer">FIFA World Cup &nbsp;·&nbsp; 2026</div>
+
+    <a href="{{ url_for('mata_mata') }}" class="vitoria-back">← Voltar ao mata-mata</a>
+
+  </div>
+
+</body>
+</html>

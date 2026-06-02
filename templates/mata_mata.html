@@ -1,0 +1,308 @@
+{% extends "base.html" %}
+{% block title %}Mata-Mata — Copa 2026{% endblock %}
+
+{% block content %}
+<div class="page-panini-bg">
+<div class="container page-top" style="padding-top:1.5rem;">
+
+  <div class="page-header">
+    <h1>🏆 Mata-Mata</h1>
+    <p>Insira os placares direto no bracket — salva automaticamente ao preencher os dois campos.</p>
+  </div>
+
+  {% if not completo %}
+  <div class="alert alert-info">
+    <div class="alert-icon">⏳</div>
+    <div>
+      <strong>Fase de grupos em andamento</strong><br>
+      {{ done }} de {{ total }} jogos inseridos. Complete todos para gerar o chaveamento.<br>
+      <a href="{{ url_for('grupos') }}" class="btn-retro" style="display:inline-block;margin-top:.8rem;">Ir para Fase de Grupos</a>
+    </div>
+  </div>
+
+  {% else %}
+
+  {# ── MACRO: card compacto do bracket ──────────────────────────────── #}
+  {% macro bkcard(j) %}
+  {% set t1 = j.time1_code %}
+  {% set t2 = j.time2_code %}
+  {% set rid = j.id %}
+  {% set r = resultados_mk.get(rid) %}
+  {% set w = j.get('winner') %}
+  <div class="bkc" id="bkc-{{ rid }}"
+       data-rid="{{ rid }}"
+       data-t1="{{ t1 or '' }}"
+       data-t2="{{ t2 or '' }}">
+
+    <div class="bkc-lbl">{{ rid }}</div>
+
+    <div class="bkc-team{% if w and w == t1 %} bkc-win{% elif w and w != t1 %} bkc-lose{% endif %}">
+      {% if t1 %}
+        <img src="{{ teams_info.get(t1,{}).get('bandeira','') }}" class="bkc-flag" onerror="this.style.display='none'">
+        <span class="bkc-name">{{ times.get(t1, t1) }}</span>
+        {% if r %}
+          <span class="bkc-score">{{ r.gols1 }}</span>
+        {% else %}
+          <input type="number" class="bkc-input" id="bki1-{{ rid }}" min="0" max="30" placeholder="–" data-rid="{{ rid }}" autocomplete="off">
+        {% endif %}
+      {% else %}
+        <span class="bkc-tbd">A definir</span>
+      {% endif %}
+    </div>
+
+    <div class="bkc-div"></div>
+
+    <div class="bkc-team{% if w and w == t2 %} bkc-win{% elif w and w != t2 %} bkc-lose{% endif %}">
+      {% if t2 %}
+        <img src="{{ teams_info.get(t2,{}).get('bandeira','') }}" class="bkc-flag" onerror="this.style.display='none'">
+        <span class="bkc-name">{{ times.get(t2, t2) }}</span>
+        {% if r %}
+          <span class="bkc-score">{{ r.gols2 }}</span>
+        {% else %}
+          <input type="number" class="bkc-input" id="bki2-{{ rid }}" min="0" max="30" placeholder="–" data-rid="{{ rid }}" autocomplete="off">
+        {% endif %}
+      {% else %}
+        <span class="bkc-tbd">A definir</span>
+      {% endif %}
+    </div>
+
+    {% if r and r.get('pen_vencedor') %}
+    <div class="bkc-pen">pen. {{ times.get(r.pen_vencedor, r.pen_vencedor) }}</div>
+    {% endif %}
+
+  </div>
+  {% endmacro %}
+
+  {# ── 8 MELHORES TERCEIROS ─────────────────────────────────────────── #}
+  <div class="terceiros-section">
+    <h2 class="section-title">8 Melhores Terceiros Colocados</h2>
+    <p class="section-sub">Os 8 melhores terceiros (de 12 grupos) avançam ao mata-mata</p>
+    <div id="terceiros-table"></div>
+  </div>
+
+  {# ── CASCADE BRACKET ─────────────────────────────────────────────── #}
+  <div class="bk-outer">
+    <div class="bk-stage">
+
+      {# Cabeçalhos #}
+      <div class="bk-headers">
+        <div class="bk-col-hdr">16-avos</div>
+        <div class="bk-hdr-gap"></div>
+        <div class="bk-col-hdr">Oitavas</div>
+        <div class="bk-hdr-gap"></div>
+        <div class="bk-col-hdr">Quartas</div>
+        <div class="bk-hdr-gap"></div>
+        <div class="bk-col-hdr">Semifinais</div>
+        <div class="bk-hdr-gap"></div>
+        <div class="bk-col-hdr">Final / 3º Lugar</div>
+      </div>
+
+      {# Colunas #}
+      <div class="bk-body">
+
+        {# R32 — 16 jogos #}
+        <div class="bk-col bk-col--r32">
+          {% for j in bracket %}
+          <div class="bk-slot bk-slot-conn {{ 'bk-slot--top' if loop.index0 % 2 == 0 else 'bk-slot--bot' }}">
+            {{ bkcard(j) }}
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="bk-body-gap"></div>
+
+        {% if fases %}
+
+        {# R16 — 8 jogos #}
+        <div class="bk-col bk-col--r16">
+          {% for j in fases.r16 %}
+          <div class="bk-slot bk-slot-conn {{ 'bk-slot--top' if loop.index0 % 2 == 0 else 'bk-slot--bot' }}">
+            {{ bkcard(j) }}
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="bk-body-gap"></div>
+
+        {# QF — 4 jogos #}
+        <div class="bk-col bk-col--qf">
+          {% for j in fases.qf %}
+          <div class="bk-slot bk-slot-conn {{ 'bk-slot--top' if loop.index0 % 2 == 0 else 'bk-slot--bot' }}">
+            {{ bkcard(j) }}
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="bk-body-gap"></div>
+
+        {# SF — 2 jogos #}
+        <div class="bk-col bk-col--sf">
+          {% for j in fases.sf %}
+          <div class="bk-slot bk-slot-conn {{ 'bk-slot--top' if loop.index0 % 2 == 0 else 'bk-slot--bot' }}">
+            {{ bkcard(j) }}
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="bk-body-gap"></div>
+
+        {# Coluna final: Final + 3º Lugar #}
+        <div class="bk-col bk-col--finais">
+          <div class="bk-finais-inner">
+            <div class="bk-finais-bloco">
+              <div class="bk-finais-label">Final</div>
+              {{ bkcard(fases.final) }}
+            </div>
+            <div class="bk-finais-sep">
+              <span>3º Lugar</span>
+            </div>
+            <div class="bk-finais-bloco">
+              <div class="bk-finais-label bk-finais-label--sub">Perdedores das Semis</div>
+              {{ bkcard(fases.terceiro) }}
+            </div>
+          </div>
+        </div>
+
+        {% endif %}
+
+      </div>{# /bk-body #}
+    </div>{# /bk-stage #}
+  </div>{# /bk-outer #}
+
+  {% endif %}{# /completo #}
+
+</div><!-- /container -->
+</div><!-- /page-panini-bg -->
+
+{# ── MODAL PÊNALTIS ─────────────────────────────────────────────────── #}
+<div class="modal-overlay hidden" id="penModal">
+  <div class="modal">
+    <h3>Empate! Quem venceu nos pênaltis?</h3>
+    <div id="penOptions" class="pen-options"></div>
+    <button class="btn-retro btn-retro--outline btn-retro--sm" onclick="closePenModal()">Cancelar</button>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{% if fases and fases.campeao %}
+<script>
+  if (!sessionStorage.getItem('vitoria_exibida')) {
+    sessionStorage.setItem('vitoria_exibida', '1');
+    setTimeout(function() {
+      window.location.href = "{{ url_for('vitoria', code=fases.campeao) }}";
+    }, 800);
+  }
+</script>
+{% endif %}
+{% if completo %}
+<script>
+const TIMES = {{ times | tojson }};
+const TEAMS_INFO = {{ teams_info | tojson }};
+const autoSaveTimers = {};
+let pendingPen = null;
+
+/* ── Auto-save ─────────────────────────────────────────────────────── */
+document.querySelectorAll('.bkc-input').forEach(inp => {
+  inp.addEventListener('input', () => checkAutoSave(inp.dataset.rid));
+});
+
+function checkAutoSave(rid) {
+  const el1 = document.getElementById('bki1-' + rid);
+  const el2 = document.getElementById('bki2-' + rid);
+  if (!el1 || !el2 || el1.value === '' || el2.value === '') return;
+
+  clearTimeout(autoSaveTimers[rid]);
+  autoSaveTimers[rid] = setTimeout(() => {
+    const g1 = parseInt(el1.value);
+    const g2 = parseInt(el2.value);
+    if (isNaN(g1) || isNaN(g2) || g1 < 0 || g2 < 0) return;
+
+    if (g1 === g2) {
+      const card = document.getElementById('bkc-' + rid);
+      pendingPen = { jid: rid, g1, g2, t1: card.dataset.t1, t2: card.dataset.t2 };
+      showPenModal(card.dataset.t1, card.dataset.t2);
+      return;
+    }
+    submitMK(rid, g1, g2, null);
+  }, 800);
+}
+
+/* ── Pênaltis ───────────────────────────────────────────────────────── */
+function showPenModal(t1, t2) {
+  const opts = document.getElementById('penOptions');
+  opts.innerHTML = [t1, t2].map(code => {
+    const info = TEAMS_INFO[code] || {};
+    return `<button class="pen-btn" onclick="choosePen('${code}')">
+      ${info.bandeira ? `<img src="${info.bandeira}" alt="" class="mini-flag">` : ''}
+      ${TIMES[code] || code}
+    </button>`;
+  }).join('');
+  document.getElementById('penModal').classList.remove('hidden');
+}
+
+function choosePen(code) {
+  if (!pendingPen) return;
+  const { jid, g1, g2 } = pendingPen;
+  closePenModal();
+  submitMK(jid, g1, g2, code);
+}
+
+function closePenModal() {
+  document.getElementById('penModal').classList.add('hidden');
+  pendingPen = null;
+}
+
+function submitMK(jid, g1, g2, penVencedor) {
+  const body = { jogo_id: jid, gols1: g1, gols2: g2 };
+  if (penVencedor) body.pen_vencedor = penVencedor;
+  fetch('/api/mata-mata', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.ok) {
+      const card = document.getElementById('bkc-' + jid);
+      if (card) card.classList.add('bkc-saved');
+      setTimeout(() => location.reload(), 400);
+    }
+  });
+}
+
+/* ── Tabela dos 8 melhores terceiros ─────────────────────────────────── */
+fetch('/api/terceiros')
+  .then(r => r.json())
+  .then(data => {
+    const top8 = data.slice(0, 8);
+    const container = document.getElementById('terceiros-table');
+    if (!container) return;
+    container.innerHTML = `
+      <table class="standings-table">
+        <thead>
+          <tr><th>#</th><th>Seleção</th><th>Grupo</th><th>J</th><th>V</th><th>E</th><th>D</th>
+          <th>GP</th><th>GC</th><th>SG</th><th>Pts</th></tr>
+        </thead>
+        <tbody>
+          ${top8.map((t, i) => {
+            const info = TEAMS_INFO[t.time] || {};
+            const flag = info.bandeira ? `<img src="${info.bandeira}" alt="" class="mini-flag">` : '';
+            const sgc = t.sg > 0 ? 'pos-sg' : (t.sg < 0 ? 'neg-sg' : '');
+            return `<tr class="qualify">
+              <td class="pos">${i+1}</td>
+              <td class="team-col">${flag}<a href="/selecao/${t.time}">${TIMES[t.time]||t.time}</a></td>
+              <td>${t.grupo}</td>
+              <td>${t.j}</td><td>${t.v}</td><td>${t.e}</td><td>${t.d}</td>
+              <td>${t.gp}</td><td>${t.gc}</td>
+              <td class="${sgc}">${t.sg > 0 ? '+' : ''}${t.sg}</td>
+              <td class="pts">${t.pts}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>`;
+  });
+</script>
+{% endif %}
+{% endblock %}

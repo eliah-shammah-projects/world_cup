@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+{% block title %}Fase de Grupos — Copa 2026{% endblock %}
+
+{% block content %}
+<div class="page-panini-bg">
+<div class="container page-top">
+  <div class="page-header">
+    <div class="page-header-top">
+      <div>
+        <h1>Fase de Grupos</h1>
+        <p>Insira os placares. A tabela atualiza automaticamente.</p>
+      </div>
+      <button type="button" class="btn-retro btn-retro--sm btn-retro--danger" onclick="confirmReset()">Limpar resultados</button>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+      </div>
+      <span id="progressText" class="progress-text">0 / 72 jogos</span>
+    </div>
+  </div>
+
+  <!-- TABS DOS GRUPOS -->
+  <div class="group-tabs" id="groupTabs">
+    {% for letra in grupos %}
+    <button class="tab-btn {% if loop.first %}active{% endif %}"
+            onclick="showGroup('{{ letra }}')" id="tab-{{ letra }}">
+      {{ letra }}
+    </button>
+    {% endfor %}
+  </div>
+
+  <!-- PAINEL DE CADA GRUPO -->
+  {% for letra, times_grupo in grupos.items() %}
+  <div class="group-panel {% if not loop.first %}hidden{% endif %}" id="grupo-{{ letra }}">
+
+    <div class="group-panel-inner">
+      <!-- JOGOS -->
+      <div class="matches-section">
+        <h3 class="panel-section-title">Jogos</h3>
+        {% for j in jogos_por_grupo[letra] %}
+        <div class="game-card" id="game-{{ j.id }}">
+          <div class="game-meta">
+            <span class="game-round">Rodada {{ j.rodada }}</span>
+            {% if j.data != '-' %}
+            <span class="game-date">{{ j.data }} · {{ j.horario }}</span>
+            <span class="game-venue">📍 {{ j.estadio }}</span>
+            {% endif %}
+          </div>
+          <div class="game-row">
+            <div class="game-team game-team-left">
+              <img src="{{ teams_info.get(j.time1, {}).get('bandeira','') }}" alt="" class="mini-flag" onerror="this.style.display='none'">
+              <span>{{ times[j.time1] }}</span>
+            </div>
+            <div class="game-score-wrap">
+              <input type="number" min="0" max="20" class="score-input"
+                     id="s1-{{ j.id }}" placeholder="–"
+                     value="{{ resultados[j.id].gols1 if j.id in resultados else '' }}"
+                     onchange="saveResult('{{ j.id }}', '{{ letra }}')"
+                     oninput="autoSave('{{ j.id }}', '{{ letra }}')">
+              <span class="score-sep">:</span>
+              <input type="number" min="0" max="20" class="score-input"
+                     id="s2-{{ j.id }}" placeholder="–"
+                     value="{{ resultados[j.id].gols2 if j.id in resultados else '' }}"
+                     onchange="saveResult('{{ j.id }}', '{{ letra }}')"
+                     oninput="autoSave('{{ j.id }}', '{{ letra }}')">
+            </div>
+            <div class="game-team game-team-right">
+              <span>{{ times[j.time2] }}</span>
+              <img src="{{ teams_info.get(j.time2, {}).get('bandeira','') }}" alt="" class="mini-flag" onerror="this.style.display='none'">
+            </div>
+            {% if j.id in resultados %}
+            <button class="btn-clear" onclick="clearResult('{{ j.id }}', '{{ letra }}')" title="Limpar resultado">✕</button>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- TABELA -->
+      <div class="standings-section">
+        <h3 class="panel-section-title">Classificação</h3>
+        <table class="standings-table" id="table-{{ letra }}">
+          <thead>
+            <tr>
+              <th>#</th><th>Seleção</th>
+              <th title="Jogos">J</th><th title="Vitórias">V</th>
+              <th title="Empates">E</th><th title="Derrotas">D</th>
+              <th title="Gols Pró">GP</th><th title="Gols Contra">GC</th>
+              <th title="Saldo de Gols">SG</th><th title="Pontos">Pts</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-{{ letra }}">
+            {% for t in tabelas[letra] %}
+            {% set i = loop.index0 %}
+            <tr class="{% if i < 2 %}qualify{% elif i == 2 %}maybe{% endif %}">
+              <td class="pos">{{ i+1 }}</td>
+              <td class="team-col">
+                <img src="{{ teams_info.get(t.time, {}).get('bandeira','') }}" alt="" class="mini-flag" onerror="this.style.display='none'">
+                <a href="{{ url_for('selecao', code=t.time) }}">{{ times[t.time] }}</a>
+              </td>
+              <td>{{ t.j }}</td><td>{{ t.v }}</td><td>{{ t.e }}</td><td>{{ t.d }}</td>
+              <td>{{ t.gp }}</td><td>{{ t.gc }}</td>
+              <td class="{% if t.sg > 0 %}pos-sg{% elif t.sg < 0 %}neg-sg{% endif %}">{{ t.sg }}</td>
+              <td class="pts">{{ t.pts }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <div class="standings-legend">
+          <span class="leg qualify"></span> Classificados &nbsp;
+          <span class="leg maybe"></span> Possível melhor 3º
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+
+  <div class="grupos-footer">
+    <a href="{{ url_for('mata_mata') }}" class="btn-mata-mata-cta">
+      <span class="btn-mata-mata-label">Avançar para o</span>
+      <span class="btn-mata-mata-title">Mata-Mata</span>
+    </a>
+  </div>
+</div><!-- /container -->
+</div><!-- /page-panini-bg -->
+{% endblock %}
+
+{% block scripts %}
+<script>
+const TIMES = {{ times | tojson }};
+const TEAMS_INFO = {{ teams_info | tojson }};
+let saveTimers = {};
+let totalDone = {{ resultados | length }};
+const totalJogos = 72;
+
+function updateProgress(done) {
+  totalDone = done;
+  const pct = Math.round(done / totalJogos * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = done + ' / ' + totalJogos + ' jogos';
+}
+updateProgress(totalDone);
+
+function showGroup(letra) {
+  document.querySelectorAll('.group-panel').forEach(p => p.classList.add('hidden'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('grupo-' + letra).classList.remove('hidden');
+  document.getElementById('tab-' + letra).classList.add('active');
+  // Update URL hash
+  history.replaceState(null, '', '#grupo-' + letra);
+}
+
+// Navigate to group from URL hash on load
+window.addEventListener('DOMContentLoaded', () => {
+  const hash = window.location.hash;
+  if (hash && hash.startsWith('#grupo-')) {
+    const letra = hash.replace('#grupo-', '');
+    if (document.getElementById('grupo-' + letra)) showGroup(letra);
+  }
+});
+
+function autoSave(jid, grupo) {
+  clearTimeout(saveTimers[jid]);
+  saveTimers[jid] = setTimeout(() => saveResult(jid, grupo), 600);
+}
+
+function saveResult(jid, grupo) {
+  const s1 = document.getElementById('s1-' + jid).value;
+  const s2 = document.getElementById('s2-' + jid).value;
+  if (s1 === '' || s2 === '') return;
+
+  fetch('/api/resultado', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({jogo_id: jid, gols1: parseInt(s1), gols2: parseInt(s2)})
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.ok) {
+      renderTable(grupo, data.tabela);
+      updateProgress(data.done);
+      markGamePlayed(jid, true);
+    }
+  });
+}
+
+function clearResult(jid, grupo) {
+  fetch('/api/resultado/' + jid, {method: 'DELETE'})
+  .then(r => r.json())
+  .then(data => {
+    if (data.ok) {
+      document.getElementById('s1-' + jid).value = '';
+      document.getElementById('s2-' + jid).value = '';
+      renderTable(grupo, data.tabela);
+      markGamePlayed(jid, false);
+      updateProgress(totalDone - 1);
+    }
+  });
+}
+
+function markGamePlayed(jid, played) {
+  const card = document.getElementById('game-' + jid);
+  if (!card) return;
+  card.classList.toggle('played', played);
+  // Update clear button
+  let btn = card.querySelector('.btn-clear');
+  if (played && !btn) {
+    btn = document.createElement('button');
+    btn.className = 'btn-clear';
+    btn.title = 'Limpar resultado';
+    btn.textContent = '✕';
+    const jidCopy = jid;
+    const grupo = card.closest('.group-panel').id.replace('grupo-', '');
+    btn.onclick = () => clearResult(jidCopy, grupo);
+    card.querySelector('.game-row').appendChild(btn);
+  } else if (!played && btn) {
+    btn.remove();
+  }
+}
+
+function renderTable(grupo, tabela) {
+  const tbody = document.getElementById('tbody-' + grupo);
+  if (!tbody) return;
+  tbody.innerHTML = tabela.map((t, i) => {
+    const info = TEAMS_INFO[t.time] || {};
+    const flag = info.bandeira ? `<img src="${info.bandeira}" alt="" class="mini-flag" onerror="this.style.display='none'">` : '';
+    const cls = i < 2 ? 'qualify' : (i == 2 ? 'maybe' : '');
+    const sgClass = t.sg > 0 ? 'pos-sg' : (t.sg < 0 ? 'neg-sg' : '');
+    return `<tr class="${cls}">
+      <td class="pos">${i+1}</td>
+      <td class="team-col">${flag}<a href="/selecao/${t.time}">${TIMES[t.time] || t.time}</a></td>
+      <td>${t.j}</td><td>${t.v}</td><td>${t.e}</td><td>${t.d}</td>
+      <td>${t.gp}</td><td>${t.gc}</td>
+      <td class="${sgClass}">${t.sg}</td>
+      <td class="pts">${t.pts}</td>
+    </tr>`;
+  }).join('');
+}
+
+function confirmReset() {
+  if (!confirm('Apagar todos os resultados? Essa ação não pode ser desfeita.')) return;
+  sessionStorage.removeItem('vitoria_exibida');
+  fetch('/api/reset', {method: 'POST'})
+  .then(() => location.reload());
+}
+</script>
+{% endblock %}

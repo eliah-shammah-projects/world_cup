@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+{% block title %}Copa do Mundo 2026 — Simulador{% endblock %}
+
+{% block content %}
+
+<!-- ── HERO ──────────────────────────────────────────────────────────────── -->
+<section class="hero-panini">
+  <div class="hero-panini-inner">
+    <span class="panini-stamp">FIFA World Cup™</span>
+    <h1 class="hero-panini-title">Copa do Mundo</h1>
+    <div class="hero-panini-year">2026</div>
+    <hr class="panini-divider" style="max-width:280px; margin:1rem auto 1.3rem;">
+    <p class="hero-panini-sub">
+      EUA · Canadá · México &nbsp;|&nbsp; 11 jun – 19 jul 2026<br>
+      48 seleções &nbsp;·&nbsp; 12 grupos &nbsp;·&nbsp; 104 jogos
+    </p>
+    <div class="hero-panini-actions">
+      <a href="{{ url_for('grupos') }}" class="btn-retro btn-retro--lg">Simular Copa</a>
+    </div>
+    <div class="hero-panini-confs" aria-hidden="true">
+      <span class="conf-chip conf-chip--conmebol">CONMEBOL</span>
+      <span class="conf-chip conf-chip--uefa">UEFA</span>
+      <span class="conf-chip conf-chip--caf">CAF</span>
+      <span class="conf-chip conf-chip--afc">AFC</span>
+      <span class="conf-chip conf-chip--concacaf">CONCACAF</span>
+      <span class="conf-chip conf-chip--ofc">OFC</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── SELEÇÕES POR GRUPO ─────────────────────────────────────────────────── -->
+<section class="section-panini" id="selecoes">
+  <div class="container">
+    <div class="section-heading">
+      <h2>Seleções por Grupo</h2>
+    </div>
+    <div class="groups-grid-panini">
+      {% for letra, times_grupo in grupos.items() %}
+      <div class="group-card-panini">
+        <div class="group-card-header-panini">
+          <span class="group-header-label">Grupo</span>
+          <span class="group-header-letter">{{ letra }}</span>
+        </div>
+        {% for code in times_grupo %}
+        {% set info = teams_info.get(code, {}) %}
+        {% set conf = info.get('confederacao','').split('/')[0] | lower %}
+        <a href="{{ url_for('selecao', code=code) }}" class="team-row-panini">
+          <img src="{{ info.get('bandeira', '') }}" alt="{{ times[code] }}" class="team-flag-panini"
+               onerror="this.style.display='none'">
+          <span class="team-name-panini">{{ times[code] }}</span>
+          <span class="conf-dot conf-{{ conf }}" title="{{ info.get('confederacao','') }}"></span>
+        </a>
+        {% endfor %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ── SIMULAÇÃO ───────────────────────────────────────────────────────────── -->
+<section class="section-panini-alt" id="simulacao">
+  <div class="container">
+    <div class="sim-cta-panini">
+      <div>
+        <h2>Simule a Copa completa</h2>
+        <p>Insira os placares da fase de grupos, acompanhe a classificação em tempo real e gere o chaveamento do mata-mata automaticamente.</p>
+        <ul class="sim-features-panini">
+          <li>12 grupos com 6 jogos cada</li>
+          <li>Critérios FIFA de desempate</li>
+          <li>8 melhores terceiros selecionados automaticamente</li>
+          <li>Chaveamento completo até a Final</li>
+        </ul>
+      </div>
+      <div class="sim-card-panini">
+        <div class="sim-card-panini-icon">🏆</div>
+        <div class="sim-card-panini-title">Fase de Grupos</div>
+        <div class="sim-card-panini-sub">
+          {% if done == 0 %}{{ total }} jogos · 12 grupos
+          {% elif done == total %}{{ total }}/{{ total }} jogos ✓
+          {% else %}{{ done }}/{{ total }} jogos
+          {% endif %}
+        </div>
+        {% if done > 0 %}
+        <div class="copa-progress-track" style="margin-bottom:1.2rem;">
+          <div class="copa-progress-fill" style="width:{{ ((done / total) * 100)|int }}%"></div>
+        </div>
+        {% endif %}
+        <a href="{{ url_for('grupos') }}" class="btn-retro btn-retro--lg">
+          {% if done == 0 %}Iniciar Simulação
+          {% elif done == total %}Ver Resultados
+          {% else %}Continuar{% endif %}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ESTÁDIOS ───────────────────────────────────────────────────────────── -->
+<section class="section-panini" id="estadios">
+  <div class="container">
+    <div class="section-heading">
+      <h2>Estádios</h2>
+    </div>
+
+    <div class="stadium-grid-panini">
+      {% for eid, est in estadios.items() %}
+      <div class="stadium-card-panini"
+           style="cursor:pointer;"
+           onclick="abrirModalEstadio(this)"
+           data-nome="{{ est.nome }}"
+           data-cidade="{{ est.cidade }}"
+           data-estado="{{ est.get('estado', '') }}"
+           data-pais="{{ est.pais }}"
+           data-cap="{{ est.capacidade }}"
+           data-jogos="{{ est.jogos }}"
+           data-foto="{{ est.foto }}"
+           title="Ver detalhes: {{ est.nome }}">
+        <div class="stadium-img-panini-wrap">
+          <img src="{{ est.foto }}" alt="{{ est.nome }}" class="stadium-img-panini" loading="lazy"
+               onerror="this.parentElement.style.background='#e4d5b0'; this.style.display='none'">
+          <div class="stadium-country-flag">
+            {{ '🇺🇸' if est.pais == 'Estados Unidos' else ('🇨🇦' if est.pais == 'Canadá' else '🇲🇽') }}
+          </div>
+        </div>
+        <div class="stadium-info-panini">
+          <div class="stadium-name-panini">{{ est.nome }}</div>
+          <div class="stadium-city-panini">{{ est.cidade }}, {{ est.pais }}</div>
+          <div class="stadium-cap-panini">👥 {{ "{:,}".format(est.capacidade).replace(',', '.') }}</div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ── MODAL ESTÁDIO ──────────────────────────────────────────────────────── -->
+<div id="estadio-overlay" class="estadio-modal-overlay" role="dialog" aria-modal="true">
+  <div class="estadio-modal" id="estadio-modal">
+    <img src="" alt="" class="estadio-modal-img" id="modal-foto"
+         onerror="this.style.background='#e4d5b0'; this.style.display='none'">
+    <div class="estadio-modal-body">
+      <div class="estadio-modal-top">
+        <div>
+          <span class="panini-stamp" id="modal-pais-stamp"></span>
+          <div class="estadio-modal-nome" id="modal-nome"></div>
+          <div class="estadio-modal-cidade" id="modal-cidade"></div>
+        </div>
+        <button class="estadio-modal-close" onclick="fecharModalEstadio()" aria-label="Fechar">×</button>
+      </div>
+      <div class="estadio-modal-stats">
+        <div class="estadio-stat estadio-stat--cap">
+          <div class="estadio-stat-lbl">Capacidade</div>
+          <div class="estadio-stat-val" id="modal-cap"></div>
+        </div>
+        <div class="estadio-stat estadio-stat--jogos">
+          <div class="estadio-stat-lbl">Jogos programados</div>
+          <div class="estadio-stat-txt" id="modal-jogos"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+/* ── Modal de estádio ─────────────────────────────────────────────────── */
+function abrirModalEstadio(card) {
+  document.getElementById('modal-foto').src      = card.dataset.foto;
+  document.getElementById('modal-foto').alt      = card.dataset.nome;
+  document.getElementById('modal-foto').style.display = '';
+  document.getElementById('modal-nome').textContent   = card.dataset.nome;
+  document.getElementById('modal-pais-stamp').textContent = card.dataset.pais.toUpperCase();
+  document.getElementById('modal-cidade').textContent =
+    card.dataset.cidade
+    + (card.dataset.estado ? ', ' + card.dataset.estado : '')
+    + ' — ' + card.dataset.pais;
+  document.getElementById('modal-cap').textContent =
+    parseInt(card.dataset.cap).toLocaleString('pt-BR');
+  document.getElementById('modal-jogos').textContent = card.dataset.jogos;
+
+  var overlay = document.getElementById('estadio-overlay');
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function fecharModalEstadio() {
+  document.getElementById('estadio-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+/* Fecha ao clicar no fundo */
+document.getElementById('estadio-overlay').addEventListener('click', function(e) {
+  if (e.target === this) fecharModalEstadio();
+});
+
+/* Fecha com ESC */
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') fecharModalEstadio();
+});
+</script>
+{% endblock %}

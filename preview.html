@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎨 Design System Preview — Panini Retrô · Copa 2026</title>
+  <link rel="stylesheet" href="static/globals.css">
+  <style>
+    /* ══ Layout do preview ══════════════════════════════════════════════ */
+    .ds-wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem 8rem;
+    }
+
+    /* Cabeçalho */
+    .ds-header {
+      text-align: center;
+      padding: 3.5rem 1rem 3rem;
+      margin-bottom: 4rem;
+      border-bottom: 3px solid var(--accent1);
+    }
+    .ds-header h1 {
+      font-family: var(--font-display);
+      font-size: var(--text-hero);
+      font-weight: 900;
+      color: var(--text);
+      line-height: 1;
+      margin: 1rem 0 0.5rem;
+    }
+    .ds-header p {
+      color: var(--text-dim);
+      font-size: var(--text-lg);
+      font-style: italic;
+      margin-top: 0.6rem;
+    }
+
+    /* Bloco de seção */
+    .ds-section { margin-bottom: 4.5rem; }
+    .ds-label {
+      font-family: var(--font-body);
+      font-size: var(--text-xs);
+      font-weight: 700;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--accent1);
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      margin-bottom: 0.4rem;
+    }
+    .ds-label::before {
+      content: '';
+      display: inline-block;
+      width: 14px; height: 3px;
+      background: var(--accent1);
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+    .ds-title {
+      font-family: var(--font-display);
+      font-size: var(--text-xl);
+      font-weight: 900;
+      color: var(--text);
+      margin-bottom: 1.6rem;
+      padding-bottom: 0.55rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .ds-note {
+      font-size: var(--text-sm);
+      color: var(--text-dim);
+      font-style: italic;
+      margin-top: 0.8rem;
+    }
+
+    /* ── Swatches de paleta ─────────────────────────────────────── */
+    .swatches { display: flex; flex-wrap: wrap; gap: 1rem; }
+    .swatch { display: flex; flex-direction: column; align-items: center; gap: 0.35rem; }
+    .swatch-color {
+      width: 72px; height: 52px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(0,0,0,.15);
+      box-shadow: var(--shadow-sm);
+    }
+    .swatch-name {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      color: var(--text-dim);
+      text-align: center;
+      line-height: 1.3;
+    }
+    .swatches-group {
+      display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1.5rem;
+    }
+    .swatches-group-label {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 0.2rem;
+    }
+
+    /* ── Cards Panini ───────────────────────────────────────────── */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 1.4rem;
+    }
+    .pcard-inner { padding: 1.1rem 1rem 0.9rem; }
+    .pcard-flag  { font-size: 3.2rem; text-align: center; display: block; line-height: 1; margin-bottom: 0.6rem; }
+    .pcard-country {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: var(--text-base);
+      color: var(--text);
+      text-align: center;
+      margin-bottom: 0.2rem;
+    }
+    .pcard-conf-name {
+      text-align: center;
+      font-size: var(--text-xs);
+      color: var(--text-dim);
+      font-style: italic;
+      margin-bottom: 0.8rem;
+    }
+    .pcard-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 0.5rem;
+      border-top: 1px solid var(--border);
+    }
+    .pcard-stat {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+
+    /* Card em estado "hover" forçado para preview */
+    .force-hover {
+      transform: rotate(0.4deg) translateY(-3px) !important;
+      box-shadow: var(--shadow-lift) !important;
+    }
+    .hover-note {
+      font-size: var(--text-xs);
+      color: var(--text-dim);
+      font-style: italic;
+      text-align: center;
+      margin-top: 0.3rem;
+    }
+
+    /* ── Escala tipográfica ─────────────────────────────────────── */
+    .type-scale { display: flex; flex-direction: column; gap: 1.2rem; }
+    .type-row { display: flex; align-items: baseline; gap: 1.5rem; flex-wrap: wrap; }
+    .type-meta {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      min-width: 160px;
+      flex-shrink: 0;
+      padding-top: 0.3rem;
+    }
+
+    /* ── Botões ─────────────────────────────────────────────────── */
+    .btn-showcase { display: flex; flex-wrap: wrap; gap: 2.5rem; align-items: flex-start; }
+    .btn-col { display: flex; flex-direction: column; gap: 0.7rem; }
+    .btn-col-title {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 0.2rem;
+    }
+    .btn-retro.btn-disabled {
+      opacity: 0.42;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+    /* Simulate pressed state */
+    .btn-retro.btn-pressed {
+      transform: translate(3px, 3px);
+      box-shadow: none;
+    }
+
+    /* ── Badges ─────────────────────────────────────────────────── */
+    .badges-row { display: flex; flex-wrap: wrap; gap: 0.8rem; align-items: center; }
+    .badge-col  { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; }
+    .badge-label-sm {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      color: var(--text-dim);
+    }
+
+    /* ── Texto corrido ──────────────────────────────────────────── */
+    .body-text-preview {
+      max-width: 680px;
+      line-height: 1.8;
+    }
+    .body-text-preview p + p { margin-top: 1rem; }
+    .body-text-preview em    { font-style: italic; color: var(--text-dim); }
+    .body-text-preview strong { font-weight: 700; color: var(--accent1); }
+
+    /* ── Section-heading preview ────────────────────────────────── */
+    .section-heading-preview { display: flex; flex-direction: column; gap: 1.5rem; }
+
+  </style>
+</head>
+<body>
+
+<div class="ds-wrap">
+
+  <!-- ═══════════════════════════════════════
+       HEADER
+       ═══════════════════════════════════════ -->
+  <div class="ds-header">
+    <span class="panini-stamp">Design System Preview</span>
+    <h1>Panini Retrô</h1>
+    <p>Copa do Mundo FIFA 2026 · Álbum de Figurinhas · Validação visual</p>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════
+       § 1 — TEXTURA DE FUNDO
+       ═══════════════════════════════════════ -->
+  <div class="ds-section">
+    <p class="ds-label">§ 1</p>
+    <h2 class="ds-title">Textura de Papel</h2>
+
+    <div style="
+      background: var(--bg);
+      background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='250'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='250' height='250' filter='url(%23p)' opacity='0.045'/%3E%3C/svg%3E\");
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow);
+    ">
+      <span style="font-family: var(--font-display); font-size: var(--text-xl); color: var(--text-dim); font-style: italic;">
+        ← Este fundo inteiro é a textura. SVG feTurbulence inline, ~0 KB.
+      </span>
+    </div>
+
+    <p class="ds-note">Zoom em 300% no browser para perceber os grãos do papel envelhecido.</p>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════
+       § 2 — PALETA COMPLETA
+       ═══════════════════════════════════════ -->
+  <div class="ds-section">
+    <p class="ds-label">§ 2</p>
+    <h2 class="ds-title">Paleta Panini</h2>
+
+    <div class="swatches-group">
+      <p class="swatches-group-label">Superfícies</p>
+      <div class="swatches">
+        <div class="swatch"><div class="swatch-color" style="background:#f2e8cf;"></div><div class="swatch-name">--bg<br>#f2e8cf</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#e4d5b0;"></div><div class="swatch-name">--bg2<br>#e4d5b0</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#fffdf5;"></div><div class="swatch-name">--card<br>#fffdf5</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#c8b090;"></div><div class="swatch-name">--border<br>#c8b090</div></div>
+      </div>
+    </div>
+
+    <div class="swatches-group">
+      <p class="swatches-group-label">Acento &amp; Texto</p>
+      <div class="swatches">
+        <div class="swatch"><div class="swatch-color" style="background:#c94a1a;"></div><div class="swatch-name">--accent1<br>#c94a1a</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#1a4a8a;"></div><div class="swatch-name">--accent2<br>#1a4a8a</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#2a1a08;"></div><div class="swatch-name">--text<br>#2a1a08</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#8a7060;"></div><div class="swatch-name">--text-dim<br>#8a7060</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#9b1a1a;"></div><div class="swatch-name">--danger<br>#9b1a1a</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#2e6b3a;"></div><div class="swatch-name">--green<br>#2e6b3a</div></div>
+      </div>
+    </div>
+
+    <div class="swatches-group">
+      <p class="swatches-group-label">Confederações</p>
+      <div class="swatches">
+        <div class="swatch"><div class="swatch-color" style="background:#2e7d32;"></div><div class="swatch-name">CONMEBOL<br>#2e7d32</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#1565c0;"></div><div class="swatch-name">UEFA<br>#1565c0</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#b84c00;"></div><div class="swatch-name">CAF<br>#b84c00</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#c62828;"></div><div class="swatch-name">AFC<br>#c62828</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#6a1a2e;"></div><div class="swatch-name">CONCACAF<br>#6a1a2e</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#00695c;"></div><div class="swatch-name">OFC<br>#00695c</div></div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════
+       § 3 — .panini-card (6 confederações)
+       ═══════════════════════════════════════ -->
+  <div class="ds-section">
+    <p class="ds-label">§ 3 · <code style="font-size:inherit">.panini-card</code></p>
+    <h2 class="ds-title">Figurinhas — 6 Confederações</h2>
+
+    <div class="cards-grid">
+
+      <!-- CONMEBOL -->
+      <div>
+        <div class="panini-card conf-conmebol">
+          <div class="pcard-inner">
+            <span class="pcard-flag">🇧🇷</span>
+            <p class="pcard-country">Brasil</p>
+            <p class="pcard-conf-name">CONMEBOL</p>
+            <div class="pcard-footer">
+              <span class="panini-code">BRA</span>
+              <span class="pcard-stat">5 títulos<br>Copa 2026</span>
+            </div>
+          </div>
+        </div>
+        <p class="hover-note">⬆ Borda verde</p>
+      </div>
+
+      <!-- UEFA -->
+      <div>
+        <div class="panini-card conf-uefa">
+          <div class="pcard-inner">
+            <span class="pcard-flag">🇫🇷</span>
+            <p class="pcard-country">França</p>
+            <p class="pcard-conf-name">UEFA</p>
+            <div class="pcard-footer">
+              <span class="panini-code">FRA</span>
+              <span class="pcard-stat">2 títulos<br>Copa 2026</span>
+            </div>
+          </div>
+        </div>
+        <p class="hover-note">⬆ Borda azul royal</p>
+      </div>
+
+      <!-- CAF -->
+      <div>
+        <div class="panini-card conf-caf">
+          <div class="pcard-inner">
+            <span class="pcard-flag">🇲🇦</span>
+            <p class="pcard-country">Marrocos</p>
+            <p class="pcard-conf-name">CAF</p>
+            <div class="pcard-footer">
+              <span class="panini-code">MAR</span>
+              <span class="pcard-stat">0 títulos<br>Copa 2026</span>
+            </div>
+          </div>
+        </div>
+        <p class="hover-note">⬆ Borda laranja-terra</p>
+      </div>
+
+      <!-- AFC -->
+      <div>
+        <div class="panini-card conf-afc">
+          <div class="pcard-inner">
+            <span class="pcard-flag">🇯🇵</span>
+            <p class="pcard-country">Japão</p>
+            <p class="pcard-conf-name">AFC</p>
+            <div class="pcard-footer">
+              <span class="panini-code">JAP</span>
+              <span class="pcard-stat">0 títulos<br>Copa 2026</span>
+            </div>
+          </div>
+        </div>
+        <p class="hover-note">⬆ Borda vermelho</p>
+      </div>
+
+      <!-- CONCACAF -->
+      <div>
+        <div class="panini-card conf-concacaf">
+          <div class="pcard-inner">
+            <span class="pcard-flag">🇲🇽</span>
+            <p class="pcard-country">México</p>
+            <p class="pcard-conf-name">CONCACAF</p>
+            <div class="pcard-footer">
+              <span class="panini-code">MEX</span>
+              <span class="pcard-stat">0 títulos<br>Copa 2026</span>
+            </div>
+          </div>
+        </div>
+        <p class="hover-note">⬆ Borda bordô</p>
+      </div>
+
+      <!-- OFC -->
+      <div>
+        <div class="panini-card conf-ofc">
+          <div class="pcard-inner">
+            <span class="pcard-flag">🇳🇿</span>
+            <p class="pcard-country">Nova Zelândia</p>
+            <p class="pcard-conf-name">OFC</p>
+            <div class="pcard-footer">
+              <span class="panini-code">NZE</span>
+              <span class="pcard-stat">0 títulos<br>Copa 2026</span>
+            </div>
+          </div>
+        </div>
+        <p class="hover-note">⬆ Borda teal</p>
+      </div>
+
+      <!-- Card em hover forçado -->
+      <div>
+        <div class="panini-card conf-conmebol force-hover">
+          <div class="pcard-inner">
+            <span class="pcard-flag">🇦🇷</span>
+            <p class="pcard-country">Argentina</p>
+            <p class="pcard-conf-name">CONMEBOL</p>
+            <div class="pcard-footer">
+              <span class="panini-code">ARG</span>
+              <span class="pcard-stat">3 títulos<br>Copa 2026</span>
+            </div>
+          </div>
+        </div>
+        <p class="hover-note">⬆ Estado :hover simulado</p>
+      </div>
+
+    </div>
+
+    <p class="ds-note">Passe o mouse nos cards para ver a animação de rotação (0.4deg + translateY −3px, 350ms ease).</p>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════
+       § 4 — .panini-title (4 tamanhos)
+       ═══════════════════════════════════════ -->
+  <div class="ds-section">
+    <p class="ds-label">§ 4 · <code style="font-size:inherit">.panini-title</code></p>
+    <h2 class="ds-title">Tipografia — Playfair Display Black</h2>
+
+    <div class="type-scale">
+      <div class="type-row">
+        <span class="type-meta">--hero · clamp(2.8–5.2rem)</span>
+        <span class="panini-title panini-title--hero">Copa 2026</span>
+      </div>
+      <div class="type-row">
+        <span class="type-meta">.panini-title--lg · 2.2rem</span>
+        <span class="panini-title panini-title--lg">Fase de Grupos</span>
+      </div>
+      <div class="type-row">
+        <span class="type-meta">.panini-title--md · 1.7rem</span>
+        <span class="panini-title panini-title--md">Grupo A — México</span>
+      </div>
+      <div class="type-row">
+        <span class="type-meta">.panini-title--sm · 1.35rem</span>
+        <span class="panini-title panini-title--sm">Classificação Final</span>
+      </div>
+      <div class="type-row">
+        <span class="type-meta">--underline modifier</span>
+        <span class="panini-title panini-title--md panini-title--underline">Mata-Mata</span>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════
+       § 5 — Texto corrido (Libre Baskerville)
+       ═══════════════════════════════════════ -->
+  <div class="ds-section">
+    <p class="ds-label">§ 5 · Corpo de texto</p>
+    <h2 class="ds-title">Libre Baskerville — Leitura</h2>
+
+    <div class="body-text-preview">
+      <p>
+        A <strong>Copa do Mundo FIFA 2026</strong> será a maior da história, com
+        <em>48 seleções</em> disputando o título em três países anfitriões — Estados Unidos,
+        Canadá e México. Será a primeira edição com este formato expandido, trazendo 104 jogos
+        distribuídos por 16 estádios de primeira linha.
+      </p>
+      <p>
+        O torneio começa com a fase de grupos, onde as equipes são distribuídas em
+        12 grupos de quatro times cada. Os dois primeiros de cada grupo avançam diretamente
+        ao mata-mata, junto com os oito melhores terceiros colocados — totalizando
+        32 seleções na fase eliminatória.
+      </p>
+      <p>
+        <em>Texto em itálico: os critérios de desempate seguem o regulamento oficial da FIFA,
+        privilegiando confrontos diretos antes de recorrer ao saldo de gols geral.</em>
+      </p>
+    </div>
+
+    <p class="ds-note" style="margin-top: 1.5rem;">
+      Fonte-body: Libre Baskerville 400/700/italic · line-height 1.8 · tamanho base 16px
+    </p>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════
+       § 6 — .btn-retro (todas as variantes)
+       ═══════════════════════════════════════ -->
+  <div class="ds-section">
+    <p class="ds-label">§ 6 · <code style="font-size:inherit">.btn-retro</code></p>
+    <h2 class="ds-title">Botões Retrô — Sombra Gráfica</h2>
+
+    <div class="btn-showcase">
+
+      <div class="btn-col">
+        <p class="btn-col-title">Principal</p>
+        <button class="btn-retro">Simular Copa</button>
+        <button class="btn-retro btn-pressed">↑ :active</button>
+        <button class="btn-retro btn-disabled">Desabilitado</button>
+      </div>
+
+      <div class="btn-col">
+        <p class="btn-col-title">Azul (accent2)</p>
+        <button class="btn-retro btn-retro--blue">Ver Mata-Mata</button>
+        <button class="btn-retro btn-retro--blue btn-pressed">↑ :active</button>
+      </div>
+
+      <div class="btn-col">
+        <p class="btn-col-title">Outline</p>
+        <button class="btn-retro btn-retro--outline">← Voltar</button>
+        <button class="btn-retro btn-retro--outline btn-pressed">↑ :active</button>
+      </div>
+
+      <div class="btn-col">
+        <p class="btn-col-title">Perigo</p>
+        <button class="btn-retro btn-retro--danger">Resetar Tudo</button>
+        <button class="btn-retro btn-retro--danger btn-pressed">↑ :active</button>
+      </div>
+
+      <div class="btn-col">
+        <p class="btn-col-title">Tamanhos</p>
+        <button class="btn-retro btn-retro--lg">Grande</button>
+        <button class="btn-retro">Normal</button>
+        <button class="btn-retro btn-retro--sm">Pequeno</button>
+      </div>
+
+    </div>
+
+    <p class="ds-note">Hover: sombra 3px→1px + translate(2,2). Active: sombra some. Sem JS.</p>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════
+       § 7 — .group-badge, .panini-code, .panini-stamp
+       ═══════════════════════════════════════ -->
+  <div class="ds-section">
+    <p class="ds-label">§ 7 · Selos &amp; Plaquinhas</p>
+    <h2 class="ds-title">group-badge · panini-code · panini-stamp</h2>
+
+    <!-- group-badge A–H -->
+    <p style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--text-dim);margin-bottom:0.8rem;letter-spacing:.15em;text-transform:uppercase;">
+      .group-badge — Grupos A a L
+    </p>
+    <div class="badges-row" style="margin-bottom: 2rem;">
+      <div class="badge-col"><span class="group-badge">A</span><span class="badge-label-sm">Grupo A</span></div>
+      <div class="badge-col"><span class="group-badge">B</span><span class="badge-label-sm">Grupo B</span></div>
+      <div class="badge-col"><span class="group-badge">C</span><span class="badge-label-sm">Grupo C</span></div>
+      <div class="badge-col"><span class="group-badge">D</span><span class="badge-label-sm">Grupo D</span></div>
+      <div class="badge-col"><span class="group-badge">E</span><span class="badge-label-sm">Grupo E</span></div>
+      <div class="badge-col"><span class="group-badge">F</span><span class="badge-label-sm">Grupo F</span></div>
+      <div class="badge-col"><span class="group-badge">G</span><span class="badge-label-sm">Grupo G</span></div>
+      <div class="badge-col"><span class="group-badge">H</span><span class="badge-label-sm">Grupo H</span></div>
+      <div class="badge-col"><span class="group-badge">I</span><span class="badge-label-sm">Grupo I</span></div>
+      <div class="badge-col"><span class="group-badge">J</span><span class="badge-label-sm">Grupo J</span></div>
+      <div class="badge-col"><span class="group-badge">K</span><span class="badge-label-sm">Grupo K</span></div>
+      <div class="badge-col"><span class="group-badge">L</span><span class="badge-label-sm">Grupo L</span></div>
+    </div>
+
+    <!-- panini-code -->
+    <p style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--text-dim);margin-bottom:0.8rem;letter-spacing:.15em;text-transform:uppercase;">
+      .panini-code — Código do país
+    </p>
+    <div class="badges-row" style="margin-bottom: 2rem;">
+      <span class="panini-code">BRA</span>
+      <span class="panini-code">ARG</span>
+      <span class="panini-code">FRA</span>
+      <span class="panini-code">ENG</span>
+      <span class="panini-code">ESP</span>
+      <span class="panini-code">GER</span>
+      <span class="panini-code">MEX</span>
+      <span class="panini-code">NZE</span>
+    </div>
+
+    <!-- panini-stamp -->
+    <p style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--text-dim);margin-bottom:0.8rem;letter-spacing:.15em;text-transform:uppercase;">
+      .panini-stamp — Carimbo de autenticidade
+    </p>
+    <div class="badges-row">
+      <span class="panini-stamp">Oficial</span>
+      <span class="panini-stamp">Copa 2026</span>
+      <span class="panini-stamp">Preview</span>
+      <span class="panini-stamp">Design System</span>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════
+       § 8 — .section-heading & .panini-divider
+       ═══════════════════════════════════════ -->
+  <div class="ds-section">
+    <p class="ds-label">§ 8 · Elementos estruturais</p>
+    <h2 class="ds-title">section-heading · panini-divider</h2>
+
+    <div class="section-heading-preview">
+
+      <div class="section-heading">
+        <h2>Fase de Grupos</h2>
+      </div>
+
+      <div class="section-heading">
+        <h2>Seleções Participantes</h2>
+      </div>
+
+      <hr class="panini-divider">
+
+      <div class="section-heading">
+        <h2>Estádios da Copa</h2>
+      </div>
+
+      <hr class="panini-divider">
+
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════
+       § 9 — Composição completa (card real)
+       ═══════════════════════════════════════ -->
+  <div class="ds-section">
+    <p class="ds-label">§ 9 · Composição real</p>
+    <h2 class="ds-title">Como ficaria um card de seleção completo</h2>
+
+    <div style="max-width: 320px;">
+      <div class="panini-card conf-conmebol">
+        <div class="pcard-inner">
+
+          <!-- Cabeçalho do card -->
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.8rem;">
+            <span class="panini-stamp">CONMEBOL</span>
+            <span class="panini-code">BRA</span>
+          </div>
+
+          <!-- Bandeira grande -->
+          <span class="pcard-flag" style="font-size:5rem;">🇧🇷</span>
+
+          <!-- Nome -->
+          <p class="panini-title panini-title--md" style="text-align:center; margin: 0.5rem 0 0.2rem;">Brasil</p>
+          <p class="pcard-conf-name">Grupo C · Copa 2026</p>
+
+          <!-- Divisor -->
+          <hr class="panini-divider" style="margin: 0.6rem 0;">
+
+          <!-- Stats retrô -->
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; font-size:var(--text-xs); font-family:var(--font-mono);">
+            <div>
+              <p style="color:var(--text-dim);">Técnico</p>
+              <p style="color:var(--text); font-weight:700;">C. Ancelotti</p>
+            </div>
+            <div>
+              <p style="color:var(--text-dim);">Títulos</p>
+              <p style="color:var(--accent1); font-weight:700;">5 🏆</p>
+            </div>
+            <div>
+              <p style="color:var(--text-dim);">Melhor result.</p>
+              <p style="color:var(--text);">Campeão</p>
+            </div>
+            <div>
+              <p style="color:var(--text-dim);">Participações</p>
+              <p style="color:var(--text);">22 Copas</p>
+            </div>
+          </div>
+
+          <!-- CTA -->
+          <div style="margin-top:1rem; text-align:center;">
+            <a href="#" class="btn-retro btn-retro--sm">Ver seleção →</a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <p class="ds-note" style="margin-top:0.8rem;">Composição real usando apenas os tokens do design system. Zero CSS custom neste card.</p>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════
+       FOOTER
+       ═══════════════════════════════════════ -->
+  <hr class="panini-divider">
+  <div style="text-align:center; padding-top: 1.5rem;">
+    <span class="panini-stamp">Copa 2026 · Design System · Panini Retrô</span>
+    <p style="margin-top:0.8rem; color:var(--text-dim); font-size:var(--text-sm); font-style:italic;">
+      Valide este preview antes de aplicar no site inteiro.
+    </p>
+  </div>
+
+</div><!-- /ds-wrap -->
+
+</body>
+</html>

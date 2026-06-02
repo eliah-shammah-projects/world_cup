@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+{% block title %}{{ nome }} — Copa 2026{% endblock %}
+
+{% block content %}
+{% set conf = info.get('confederacao','').split('/')[0] | lower %}
+<div class="page-panini-bg">
+<div class="container page-top" style="padding-top:1.5rem;">
+
+  <!-- HERO — Grande figurinha Panini da seleção -->
+  <div class="panini-card conf-{{ conf }} selecao-hero">
+    <div class="selecao-hero-top">
+      <span class="panini-stamp">{{ info.get('confederacao', '') }}</span>
+      {% if grupo %}
+      <a href="{{ url_for('grupos') }}#grupo-{{ grupo }}" class="group-badge">{{ grupo }}</a>
+      {% endif %}
+    </div>
+
+    {% if info.get('bandeira') %}
+    <img src="{{ info.bandeira }}" alt="{{ nome }}" class="selecao-hero-flag">
+    {% endif %}
+
+    <h1 class="selecao-hero-name">{{ nome }}</h1>
+
+    <hr class="panini-divider selecao-hero-divider">
+
+    <div class="selecao-hero-meta">
+      <span class="panini-code">{{ code }}</span>
+      {% if grupo %}
+      <span style="color:#8a7060;font-family:'Libre Baskerville',serif;font-size:0.82rem;font-style:italic;">
+        Grupo {{ grupo }} · Copa 2026
+      </span>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- GRID DE CARDS -->
+  <div class="selecao-grid">
+
+    <!-- TÉCNICO -->
+    <div class="panini-card conf-{{ conf }} static">
+      <div class="selecao-card-inner">
+        <div class="selecao-card-label">🧑‍💼 Técnico</div>
+        <div class="selecao-card-value">{{ info.get('tecnico', {}).get('nome', 'N/A') }}</div>
+        <div class="selecao-card-sub">{{ info.get('tecnico', {}).get('nac', '') }}</div>
+      </div>
+    </div>
+
+    <!-- HISTÓRICO -->
+    {% set hist = info.get('historia', {}) %}
+    <div class="panini-card conf-{{ conf }} static">
+      <div class="selecao-card-inner">
+        <div class="selecao-card-label">🏆 Histórico em Copas</div>
+        <div class="selecao-hist-rows">
+          <div class="selecao-hist-row">
+            <span class="selecao-hist-label">Participações</span>
+            <span class="selecao-hist-val">{{ hist.get('p', 0) }}</span>
+          </div>
+          <div class="selecao-hist-row">
+            <span class="selecao-hist-label">Títulos</span>
+            <span class="selecao-hist-val {% if hist.get('titulos', 0) > 0 %}selecao-gold{% endif %}">
+              {{ hist.get('titulos', 0) }}
+              {% if hist.get('anos') %} ({{ hist.anos | join(', ') }}){% endif %}
+            </span>
+          </div>
+          <div class="selecao-hist-row">
+            <span class="selecao-hist-label">Melhor resultado</span>
+            <span class="selecao-hist-val">{{ hist.get('melhor', 'N/A') }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DESCRIÇÃO -->
+    {% if info.get('desc') %}
+    <div class="panini-card conf-{{ conf }} static selecao-card-wide">
+      <div class="selecao-card-inner">
+        <div class="selecao-card-label">ℹ️ Sobre</div>
+        <p class="selecao-desc">{{ info.desc }}</p>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- CONVOCAÇÃO -->
+    <div class="panini-card conf-{{ conf }} static selecao-card-wide">
+      <div class="selecao-card-inner">
+        <div class="selecao-card-label">👕 Convocação</div>
+        {% set conv = info.get('convocacao') %}
+        {% if conv %}
+          {% set goleiros   = conv | selectattr('pos', 'equalto', 'Goleiro')  | list %}
+          {% set defensores = conv | selectattr('pos', 'equalto', 'Defensor') | list %}
+          {% set meias      = conv | selectattr('pos', 'equalto', 'Meia')     | list %}
+          {% set atacantes  = conv | selectattr('pos', 'equalto', 'Atacante') | list %}
+          <div class="conv-grid-panini">
+            {% for grp_nome, jogadores in [('Goleiros', goleiros), ('Defensores', defensores), ('Meias', meias), ('Atacantes', atacantes)] %}
+            {% if jogadores %}
+            <div class="conv-col-panini">
+              <div class="conv-col-title-panini">{{ grp_nome }}</div>
+              {% for j in jogadores %}
+              <div class="conv-player-panini">{{ j.nome }}</div>
+              {% endfor %}
+            </div>
+            {% endif %}
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="conv-pending-panini">⏳ Convocação ainda não anunciada</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- JOGOS NA FASE DE GRUPOS -->
+    {% if jogos %}
+    <div class="panini-card conf-{{ conf }} static selecao-card-wide">
+      <div class="selecao-card-inner">
+        <div class="selecao-card-label">📅 Jogos — Grupo {{ grupo }}</div>
+        <div class="selecao-matches">
+          {% for j in jogos %}
+          <div class="selecao-match-row {% if j.id in resultados %}played{% endif %}">
+            <div class="selecao-match-meta">
+              <span class="selecao-match-round">R{{ j.rodada }}</span>
+              {% if j.data != '-' %}<span class="selecao-match-date">{{ j.data }} {{ j.horario }}</span>{% endif %}
+              {% if j.estadio != '-' %}<span class="selecao-match-venue">📍{{ j.estadio }}</span>{% endif %}
+            </div>
+            <div class="selecao-match-teams">
+              <span class="selecao-match-team {% if j.time1 == code %}selecao-highlight{% endif %}">
+                <img src="{{ teams_info.get(j.time1, {}).get('bandeira','') }}" alt="" class="mini-flag" onerror="this.style.display='none'">
+                {{ times[j.time1] }}
+              </span>
+              {% if j.id in resultados %}
+              <span class="selecao-match-score">{{ resultados[j.id].gols1 }} – {{ resultados[j.id].gols2 }}</span>
+              {% else %}
+              <span class="selecao-match-vs">vs</span>
+              {% endif %}
+              <span class="selecao-match-team {% if j.time2 == code %}selecao-highlight{% endif %}">
+                {{ times[j.time2] }}
+                <img src="{{ teams_info.get(j.time2, {}).get('bandeira','') }}" alt="" class="mini-flag" onerror="this.style.display='none'">
+              </span>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- TABELA DO GRUPO -->
+    {% if tabela %}
+    <div class="panini-card conf-{{ conf }} static selecao-card-wide">
+      <div class="selecao-card-inner">
+        <div class="selecao-card-label">📊 Classificação — Grupo {{ grupo }}</div>
+        <table class="standings-table">
+          <thead>
+            <tr><th>#</th><th>Seleção</th><th>J</th><th>V</th><th>E</th><th>D</th><th>GP</th><th>GC</th><th>SG</th><th>Pts</th></tr>
+          </thead>
+          <tbody>
+            {% for t in tabela %}
+            {% set i = loop.index0 %}
+            <tr class="{% if t.time == code %}me{% endif %} {% if i < 2 %}qualify{% elif i == 2 %}maybe{% endif %}">
+              <td class="pos">{{ i+1 }}</td>
+              <td class="team-col">
+                <img src="{{ teams_info.get(t.time, {}).get('bandeira','') }}" alt="" class="mini-flag" onerror="this.style.display='none'">
+                <a href="{{ url_for('selecao', code=t.time) }}">{{ times[t.time] }}</a>
+              </td>
+              <td>{{ t.j }}</td><td>{{ t.v }}</td><td>{{ t.e }}</td><td>{{ t.d }}</td>
+              <td>{{ t.gp }}</td><td>{{ t.gc }}</td>
+              <td class="{% if t.sg > 0 %}pos-sg{% elif t.sg < 0 %}neg-sg{% endif %}">{{ t.sg }}</td>
+              <td class="pts">{{ t.pts }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <div class="standings-legend">
+          <span class="leg qualify"></span> Classificados &nbsp;
+          <span class="leg maybe"></span> Possível melhor 3º
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+  </div><!-- /selecao-grid -->
+
+  <div class="mt-2">
+    <a href="{{ url_for('index') }}#selecoes" class="btn-retro btn-retro--outline">← Voltar às seleções</a>
+  </div>
+
+</div><!-- /container -->
+</div><!-- /page-panini-bg -->
+{% endblock %}

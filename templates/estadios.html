@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}Estádios — Copa 2026{% endblock %}
+
+{% block content %}
+<div class="container page-top">
+  <div class="page-header">
+    <h1>🏟️ Estádios da Copa 2026</h1>
+    <p>16 estádios em 3 países — Estados Unidos, Canadá e México</p>
+  </div>
+
+  <!-- EUA -->
+  <div class="country-section">
+    <div class="country-header">
+      <span class="flag-big">🇺🇸</span>
+      <div>
+        <h2>Estados Unidos</h2>
+        <span class="country-sub">11 estádios</span>
+      </div>
+    </div>
+    <div class="stadium-grid-page">
+      {% for eid, est in estadios.items() if est.pais == 'Estados Unidos' %}
+      <div class="stadium-card-page">
+        <div class="stadium-img-wrap">
+          <img src="{{ est.foto }}" alt="{{ est.nome }}" class="stadium-img" loading="lazy"
+               onerror="this.parentElement.classList.add('no-img')">
+        </div>
+        <div class="stadium-info-page">
+          <div class="stadium-name-lg">{{ est.nome }}</div>
+          <div class="stadium-city-lg">📍 {{ est.cidade }}, {{ est.estado }}</div>
+          <div class="stadium-cap-lg">👥 {{ "{:,}".format(est.capacidade).replace(',', '.') }} lugares</div>
+          <div class="stadium-games">🎮 {{ est.jogos }}</div>
+          <p class="stadium-desc">{{ est.desc }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Canadá -->
+  <div class="country-section">
+    <div class="country-header">
+      <span class="flag-big">🇨🇦</span>
+      <div>
+        <h2>Canadá</h2>
+        <span class="country-sub">2 estádios</span>
+      </div>
+    </div>
+    <div class="stadium-grid-page">
+      {% for eid, est in estadios.items() if est.pais == 'Canadá' %}
+      <div class="stadium-card-page">
+        <div class="stadium-img-wrap">
+          <img src="{{ est.foto }}" alt="{{ est.nome }}" class="stadium-img" loading="lazy"
+               onerror="this.parentElement.classList.add('no-img')">
+        </div>
+        <div class="stadium-info-page">
+          <div class="stadium-name-lg">{{ est.nome }}</div>
+          <div class="stadium-city-lg">📍 {{ est.cidade }}, {{ est.estado }}</div>
+          <div class="stadium-cap-lg">👥 {{ "{:,}".format(est.capacidade).replace(',', '.') }} lugares</div>
+          <div class="stadium-games">🎮 {{ est.jogos }}</div>
+          <p class="stadium-desc">{{ est.desc }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- México -->
+  <div class="country-section">
+    <div class="country-header">
+      <span class="flag-big">🇲🇽</span>
+      <div>
+        <h2>México</h2>
+        <span class="country-sub">3 estádios</span>
+      </div>
+    </div>
+    <div class="stadium-grid-page">
+      {% for eid, est in estadios.items() if est.pais == 'México' %}
+      <div class="stadium-card-page">
+        <div class="stadium-img-wrap">
+          <img src="{{ est.foto }}" alt="{{ est.nome }}" class="stadium-img" loading="lazy"
+               onerror="this.parentElement.classList.add('no-img')">
+        </div>
+        <div class="stadium-info-page">
+          <div class="stadium-name-lg">{{ est.nome }}</div>
+          <div class="stadium-city-lg">📍 {{ est.cidade }}, {{ est.estado }}</div>
+          <div class="stadium-cap-lg">👥 {{ "{:,}".format(est.capacidade).replace(',', '.') }} lugares</div>
+          <div class="stadium-games">🎮 {{ est.jogos }}</div>
+          <p class="stadium-desc">{{ est.desc }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,2099 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   COPA 2026 — DESIGN SYSTEM — PANINI RETRÔ
+   Inspirado nos álbuns Panini Copa 78 / 82
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── GOOGLE FONTS ──────────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
+
+/* ── DESIGN TOKENS ─────────────────────────────────────────────────────── */
+:root {
+
+  /* ── Paleta Panini ─────────────────────────────────────────────────── */
+  --bg:         #f2e8cf;   /* papel envelhecido */
+  --bg2:        #e4d5b0;   /* papel mais escuro */
+  --card:       #fffdf5;   /* figurinha branca */
+  --accent1:    #c94a1a;   /* laranja Panini — cor primária */
+  --accent2:    #1a4a8a;   /* azul royal — cor secundária */
+  --text:       #2a1a08;   /* tinta escura */
+  --text-dim:   #6b5040;   /* texto secundário — #6b5040 passa WCAG AA (4.6:1 sobre --bg) */
+  --border:     #c8b090;   /* borda papel */
+  --gold:       #c94a1a;   /* alias de accent1 (drops o ouro genérico) */
+  --gold-lt:    #e86030;   /* accent1 mais claro */
+  --danger:     #9b1a1a;   /* vermelho escuro */
+  --green:      #2e6b3a;   /* verde clássico */
+  --qualify:    #d8ead8;
+  --qualify-b:  #2e6b3a;
+  --maybe:      #f0e4c8;
+  --maybe-b:    #c94a1a;
+  --shadow-clr: rgba(42, 26, 8, 0.18);
+
+  /* ── Cores das confederações (bordas das figurinhas) ───────────────── */
+  --conf-conmebol:  #2e7d32;   /* verde — América do Sul */
+  --conf-uefa:      #1565c0;   /* azul royal — Europa */
+  --conf-caf:       #b84c00;   /* laranja-terra — África */
+  --conf-afc:       #c62828;   /* vermelho — Ásia */
+  --conf-concacaf:  #6a1a2e;   /* bordô — CONCACAF */
+  --conf-ofc:       #00695c;   /* verde-teal — Oceania */
+
+  /* ── Tipografia ────────────────────────────────────────────────────── */
+  --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-body:    'Libre Baskerville', Georgia, 'Times New Roman', serif;
+  --font-mono:    'Courier New', Courier, monospace;
+
+  /* Escala tipográfica */
+  --text-xs:   0.72rem;    /*  ~11px */
+  --text-sm:   0.85rem;    /*  ~14px */
+  --text-base: 1rem;       /*  ~16px */
+  --text-lg:   1.15rem;    /*  ~18px */
+  --text-xl:   1.35rem;    /*  ~22px */
+  --text-2xl:  1.7rem;     /*  ~27px */
+  --text-3xl:  2.2rem;     /*  ~35px */
+  --text-4xl:  3rem;       /*  ~48px */
+  --text-hero: clamp(2.8rem, 7vw, 5.2rem);
+
+  /* ── Espaçamento ───────────────────────────────────────────────────── */
+  --space-1:  0.4rem;
+  --space-2:  0.8rem;
+  --space-3:  1.2rem;
+  --space-4:  1.8rem;
+  --space-6:  3rem;
+  --space-8:  4.5rem;
+
+  /* ── Border radius ─────────────────────────────────────────────────── */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius:    7px;
+  --radius-lg: 12px;
+
+  /* Borda grossa da figurinha Panini */
+  --panini-border-w: 8px;
+
+  /* ── Sombras (papel com relevo, nada de neon) ──────────────────────── */
+  --shadow-sm:   2px 2px 0 rgba(42,26,8,.10);
+  --shadow:      3px 4px 14px rgba(42,26,8,.18);
+  --shadow-lg:   6px 8px 28px rgba(42,26,8,.26);
+  --shadow-card: 2px 3px 0 rgba(42,26,8,.12), 4px 6px 18px rgba(42,26,8,.12);
+  --shadow-lift: 4px 6px 0 rgba(42,26,8,.14), 8px 12px 24px rgba(42,26,8,.18);
+
+  /* ── Motion — lento e quente ───────────────────────────────────────── */
+  --ease:        350ms ease;
+  --ease-fast:   150ms ease;
+  --ease-spring: 420ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ── Misc ──────────────────────────────────────────────────────────── */
+  --navbar-h: 58px;
+}
+
+/* ── TEXTURA DE PAPEL ENVELHECIDO ──────────────────────────────────────── */
+/*
+   SVG feTurbulence inline como data URI — peso ~zero, gerado pelo browser.
+   opacity 0.045: perceptível mas não sobrepõe o conteúdo.
+*/
+body {
+  background-color: var(--bg);
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='250'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='250' height='250' filter='url(%23p)' opacity='0.045'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 250px 250px;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: 1.65;
+  min-height: 100vh;
+}
+
+/* ── BASE RESET ────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+img  { display: block; max-width: 100%; }
+
+a {
+  color: var(--accent1);
+  text-decoration: none;
+  transition: color var(--ease-fast);
+}
+a:hover { color: var(--accent2); text-decoration: underline; }
+
+/* ── TIPOGRAFIA BASE ───────────────────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 900;
+  color: var(--text);
+  line-height: 1.15;
+}
+
+/* ── UTILITÁRIOS DE LAYOUT ─────────────────────────────────────────────── */
+.container   { max-width: 1200px; margin: 0 auto; padding: 0 1.2rem; }
+.hidden      { display: none !important; }
+.mt-1        { margin-top: var(--space-2); }
+.mt-2        { margin-top: var(--space-4); }
+.text-center { text-align: center; }
+.page-top    { padding-top: 2rem; padding-bottom: 3.5rem; }
+
+/* ════════════════════════════════════════════════════════════════════════
+   COMPONENTES DO DESIGN SYSTEM PANINI
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* ── .panini-card — a "figurinha" base ────────────────────────────────── */
+/* Cores hardcoded — imune às overrides do style.css */
+/*
+   Uso: <div class="panini-card conf-[conf]">
+   A borda grossa na esquerda + topo varia por confederação.
+   Hover: leve rotação como pegar uma figurinha física.
+*/
+.panini-card {
+  background: #faf4e4;
+  color: #2a1a08;              /* reset — imune ao color:#e2e8f0 do style.css */
+  border-radius: 7px;
+  box-shadow: 2px 3px 0 rgba(42,26,8,.10), 4px 6px 18px rgba(42,26,8,.10);
+  position: relative;
+  overflow: hidden;
+  transition: transform 350ms ease, box-shadow 350ms ease;
+  border-top: 3px solid #c8b090;
+}
+
+.panini-card:hover {
+  transform: rotate(0.4deg) translateY(-3px);
+  box-shadow: 4px 6px 0 rgba(42,26,8,.13), 8px 14px 24px rgba(42,26,8,.16);
+}
+
+/* Cards estáticos — sem hover */
+.panini-card.static        { cursor: default; }
+.panini-card.static:hover  { transform: none; box-shadow: 2px 3px 0 rgba(42,26,8,.10), 4px 6px 18px rgba(42,26,8,.10); }
+
+/* Borda + fundo pastel por confederação */
+.panini-card.conf-conmebol { border-left: var(--panini-border-w) solid var(--conf-conmebol); background: #e8f5e8 !important; }
+.panini-card.conf-uefa     { border-left: var(--panini-border-w) solid var(--conf-uefa);     background: #e8eef8 !important; }
+.panini-card.conf-caf      { border-left: var(--panini-border-w) solid var(--conf-caf);      background: #faeee4 !important; }
+.panini-card.conf-afc      { border-left: var(--panini-border-w) solid var(--conf-afc);      background: #fdf4e0 !important; }
+.panini-card.conf-concacaf { border-left: var(--panini-border-w) solid var(--conf-concacaf); background: #ede8f8 !important; }
+.panini-card.conf-ofc      { border-left: var(--panini-border-w) solid var(--conf-ofc);      background: #e2f4f1 !important; }
+
+/* Sem hover para cards estáticos (tabelas, etc.) */
+.panini-card.no-hover { pointer-events: none; }
+.panini-card.no-hover:hover { transform: none; box-shadow: var(--shadow-card); }
+
+/* ── .panini-code — código do país em relevo no canto ─────────────────── */
+/*
+   Uso: <span class="panini-code">BRA</span>
+   Tipografia condensada, letras maiúsculas, tom de carimbo.
+*/
+.panini-code {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: var(--text-xs);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: var(--bg2);
+  padding: 0.15rem 0.55rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  display: inline-block;
+  line-height: 1.4;
+  box-shadow: var(--shadow-sm);
+}
+
+/* ── .panini-title — Playfair Black, dramático ─────────────────────────── */
+/*
+   Uso: <h2 class="panini-title">Grupo A</h2>
+   Versão modifiers: .panini-title--lg, .panini-title--hero
+*/
+.panini-title {
+  font-family: var(--font-display);
+  font-weight: 900;
+  color: var(--text);
+  line-height: 1.1;
+}
+.panini-title--sm   { font-size: var(--text-xl); }
+.panini-title--md   { font-size: var(--text-2xl); }
+.panini-title--lg   { font-size: var(--text-3xl); }
+.panini-title--hero { font-size: var(--text-hero); }
+
+/* Linha decorativa abaixo do título (estilo rótulo Panini) */
+.panini-title--underline {
+  padding-bottom: 0.5rem;
+  border-bottom: 3px solid var(--accent1);
+  display: inline-block;
+}
+
+/* ── STAMP — elemento decorativo de "carimbo retrô" ───────────────────── */
+/*
+   Uso: <span class="panini-stamp">OFICIAL</span>
+   Simula o carimbo de autenticidade nos álbuns.
+*/
+.panini-stamp {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-xs);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--accent1);
+  border: 2px solid var(--accent1);
+  padding: 0.15rem 0.6rem;
+  border-radius: var(--radius-xs);
+  opacity: 0.85;
+}
+
+/* ── BOTÕES RETRÔ ──────────────────────────────────────────────────────── */
+/*
+   .btn-retro: fundo laranja Panini, sombra dura (estilo impressão gráfica).
+   Hover: sombra some, botão "pressiona" — feedback físico sem JS.
+*/
+.btn-retro {
+  display: inline-block;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #fffdf5;            /* hardcoded — imune ao style.css */
+  background: #c94a1a;       /* laranja Panini */
+  border: 2px solid #2a1a08; /* tinta escura */
+  padding: 0.55rem 1.4rem;
+  border-radius: 4px;
+  box-shadow: 3px 3px 0 #2a1a08;
+  cursor: pointer;
+  transition: transform 150ms ease, box-shadow 150ms ease;
+  text-decoration: none;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.btn-retro:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 #2a1a08;
+  color: #fffdf5;
+  text-decoration: none;
+}
+
+.btn-retro:active {
+  transform: translate(3px, 3px);
+  box-shadow: none;
+}
+
+/* Variante azul (accent2) */
+.btn-retro--blue {
+  background: #1a4a8a;
+  color: #fff;
+  border-color: #2a1a08;
+  box-shadow: 3px 3px 0 #2a1a08;
+}
+.btn-retro--blue:hover { color: #fff; }
+
+/* Variante outline */
+.btn-retro--outline {
+  background: transparent;
+  color: #c94a1a;
+  border-color: #c94a1a;
+  box-shadow: 3px 3px 0 #c94a1a;
+}
+.btn-retro--outline:hover {
+  background: #c94a1a;
+  color: #fffdf5;
+  box-shadow: 1px 1px 0 #c94a1a;
+}
+
+/* Tamanhos */
+.btn-retro--sm  { padding: 0.3rem 0.8rem; font-size: 0.72rem; }
+.btn-retro--lg  { padding: 0.8rem 2.2rem; font-size: 1.15rem; }
+
+/* Botão de perigo */
+.btn-retro--danger {
+  background: var(--danger);
+  border-color: var(--text);
+  box-shadow: 3px 3px 0 var(--text);
+}
+
+/* ── BADGE DE GRUPO (A, B, C…) ─────────────────────────────────────────── */
+/*
+   Uso: <span class="group-badge">A</span>
+   Visual de "carimbo de tinta" — dark ink sobre papel, estilo Panini vintage.
+   O laranja (accent1) fica reservado para a borda esquerda do card.
+*/
+.group-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  color: #fffdf5;
+  background: #2a1a08;          /* tinta escura — carimbo vintage */
+  border-radius: 3px;
+  box-shadow:
+    1px 1px 0 rgba(200,176,144,.8),   /* relevo claro */
+    2px 3px 6px rgba(42,26,8,.22);    /* sombra suave */
+  flex-shrink: 0;
+  user-select: none;
+}
+
+/* ── DIVIDER DECORATIVO ─────────────────────────────────────────────────── */
+.panini-divider {
+  border: none;
+  height: 2px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    var(--border) 20%,
+    var(--accent1) 50%,
+    var(--border) 80%,
+    transparent 100%);
+  margin: var(--space-4) 0;
+}
+
+/* ── SECTION TITLE RETRÔ ───────────────────────────────────────────────── */
+/*
+   Combina panini-title com linha decorativa.
+*/
+.section-heading {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: var(--space-4);
+}
+.section-heading h2 {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 900;
+  color: #2a1a08;   /* hardcoded — imune ao override do style.css */
+}
+.section-heading::after {
+  content: '';
+  flex: 1;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent1), transparent);
+  border-radius: 2px;
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   TOKENS SEMÂNTICOS — somente para .conf-dot (pontinhos das confederações)
+   NÃO aplicar background genérico em cards/containers
+   ════════════════════════════════════════════════════════════════════════ */
+.conf-dot.conf-conmebol { background: var(--conf-conmebol); }
+.conf-dot.conf-uefa     { background: var(--conf-uefa);     }
+.conf-dot.conf-caf      { background: var(--conf-caf);      }
+.conf-dot.conf-afc      { background: var(--conf-afc);      }
+.conf-dot.conf-concacaf { background: var(--conf-concacaf); }
+.conf-dot.conf-ofc      { background: var(--conf-ofc);      }
+
+/* ════════════════════════════════════════════════════════════════════════
+   COMPONENTE — NAVBAR PANINI
+   ════════════════════════════════════════════════════════════════════════ */
+.navbar-panini {
+  background: #fffdf5;
+  border-bottom: 3px solid #c94a1a;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 10px rgba(42,26,8,.10);
+}
+
+.nav-panini-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0.65rem 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+/* Brand — "⚽ Copa 2026" em Playfair */
+.nav-panini-brand {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 900;
+  font-size: 1.3rem;
+  color: #2a1a08;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  white-space: nowrap;
+  letter-spacing: -0.01em;
+  transition: color 150ms ease;
+}
+.nav-panini-brand:hover { color: #c94a1a; text-decoration: none; }
+.nav-panini-brand-year  { color: #c94a1a; }
+
+/* Links de navegação */
+.nav-panini-links {
+  display: flex;
+  gap: 0.15rem;
+  list-style: none;
+  margin-left: auto;
+}
+.nav-panini-links a {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-size: 0.88rem;
+  color: #6b5040;
+  padding: 0.4rem 0.95rem;
+  border-radius: 4px;
+  transition: all 180ms ease;
+  text-decoration: none;
+  display: block;
+}
+.nav-panini-links a:hover,
+.nav-panini-links a.active {
+  color: #c94a1a;
+  background: rgba(201,74,26,.09);
+  text-decoration: none;
+}
+
+/* Botão hambúrguer (mobile) */
+.nav-panini-toggle {
+  display: none;
+  background: none;
+  border: 1.5px solid #c8b090;
+  color: #2a1a08;
+  font-size: 1.2rem;
+  cursor: pointer;
+  margin-left: auto;
+  padding: 0.25rem 0.55rem;
+  border-radius: 4px;
+  line-height: 1;
+  transition: border-color 150ms ease;
+}
+.nav-panini-toggle:hover { border-color: #c94a1a; color: #c94a1a; }
+
+@media (max-width: 768px) {
+  .nav-panini-links {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 100%; left: 0; right: 0;
+    background: #fffdf5;
+    border-bottom: 3px solid #c94a1a;
+    padding: 0.8rem 1.2rem;
+    box-shadow: 0 6px 18px rgba(42,26,8,.15);
+  }
+  .nav-panini-links.open { display: flex; }
+  .nav-panini-toggle     { display: block; }
+  .nav-panini-inner      { position: relative; }
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   COMPONENTE — HERO PANINI
+   Usa classes novas (.hero-panini) — não colide com .hero do style.css.
+   Redefine os tokens localmente para ser imune às overrides do style.css.
+   ════════════════════════════════════════════════════════════════════════ */
+.hero-panini {
+  /* Tokens Panini redefinidos no escopo local */
+  --bg:       #f2e8cf;
+  --bg2:      #e4d5b0;
+  --card:     #fffdf5;
+  --accent1:  #c94a1a;
+  --accent2:  #1a4a8a;
+  --text:     #2a1a08;
+  --text-dim: #6b5040;
+  --border:   #c8b090;
+
+  background-color: #f2e8cf;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='250'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='250' height='250' filter='url(%23p)' opacity='0.045'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 250px 250px;
+  border-bottom: 4px solid #c94a1a;
+  padding: 5rem 1.2rem 4.5rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Faixa das 6 confederações no topo — o "elemento inesquecível" */
+.hero-panini::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 7px;
+  background: linear-gradient(90deg,
+    #2e7d32  0%      16.67%,   /* CONMEBOL */
+    #1565c0  16.67%  33.33%,   /* UEFA */
+    #b84c00  33.33%  50%,      /* CAF */
+    #c62828  50%     66.67%,   /* AFC */
+    #6a1a2e  66.67%  83.33%,   /* CONCACAF */
+    #00695c  83.33%  100%      /* OFC */
+  );
+}
+
+/* "2026" gigante como marca d'água — Playfair rotacionado */
+.hero-panini::before {
+  content: '2026';
+  position: absolute;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 900;
+  font-size: clamp(10rem, 28vw, 22rem);
+  color: #c94a1a;
+  opacity: 0.055;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-8deg);
+  pointer-events: none;
+  user-select: none;
+  line-height: 1;
+  white-space: nowrap;
+  z-index: 0;
+}
+
+.hero-panini-inner {
+  position: relative;
+  max-width: 680px;
+  margin: 0 auto;
+  z-index: 1;
+}
+
+/* "Copa do Mundo" — Playfair 900, tom escuro */
+.hero-panini-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 900;
+  font-size: clamp(2.2rem, 6vw, 3.8rem);
+  color: #2a1a08;
+  line-height: 1.05;
+  margin: 0.9rem 0 0;
+  letter-spacing: -0.01em;
+}
+
+/* "2026" — enorme, laranja Panini, domina a composição */
+.hero-panini-year {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 900;
+  font-size: clamp(4.5rem, 14vw, 9.5rem);
+  color: #c94a1a;
+  line-height: 0.85;
+  margin: -0.05em 0 0.4rem;
+  letter-spacing: -0.02em;
+}
+
+/* Subtítulo em Libre Baskerville itálico */
+.hero-panini-sub {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-size: 1rem;
+  color: #6b5040;
+  font-style: italic;
+  line-height: 1.75;
+  margin-bottom: 2.2rem;
+}
+
+.hero-panini-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 1.8rem;
+}
+
+/* 6 etiquetas das confederações — carimbinhos decorativos, não interativos */
+.hero-panini-confs {
+  display: flex;
+  gap: 0.35rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.conf-chip {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.56rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 0.1rem 0.42rem;
+  border-radius: 2px;
+  border: 1px solid currentColor;
+  opacity: 0.5;
+  line-height: 1.6;
+  pointer-events: none;       /* não interativo */
+}
+.conf-chip--conmebol { color: #2e7d32; }
+.conf-chip--uefa     { color: #1565c0; }
+.conf-chip--caf      { color: #b84c00; }
+.conf-chip--afc      { color: #c62828; }
+.conf-chip--concacaf { color: #6a1a2e; }
+.conf-chip--ofc      { color: #00695c; }
+
+@media (max-width: 768px) {
+  .hero-panini          { padding: 3.5rem 1rem 3rem; }
+  .hero-panini::before  { font-size: 8rem; opacity: 0.04; }
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   COMPONENTE — SEÇÕES DA HOME (grupos, CTA, estádios)
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* Wrapper de seção — papel claro */
+.section-panini {
+  padding: 3.5rem 0;
+  background-color: #f2e8cf;
+}
+
+/* Variante levemente mais escura (intercalar seções) */
+.section-panini-alt {
+  padding: 3.5rem 0;
+  background-color: #e4d5b0;
+}
+
+/* ── Grid dos grupos ──────────────────────────────────────────────────── */
+.groups-grid-panini {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 1.2rem;
+}
+
+/* ── Card de grupo (figurinha de grupo) ───────────────────────────────── */
+.group-card-panini {
+  background: #faf4e4;
+  border-radius: 7px;
+  border-top: 3px solid #c8b090;
+  border-left: 5px solid #c94a1a;   /* laranja Panini — borda assinatura */
+  box-shadow: 2px 3px 0 rgba(42,26,8,.10), 4px 8px 16px rgba(42,26,8,.10);
+  overflow: hidden;
+  transition: transform 350ms ease, box-shadow 350ms ease;
+}
+.group-card-panini:hover {
+  transform: rotate(0.35deg) translateY(-3px);
+  box-shadow: 4px 6px 0 rgba(42,26,8,.13), 8px 14px 24px rgba(42,26,8,.16);
+}
+
+/* Cabeçalho do card — tipografia pura, sem badge quadrado */
+.group-card-header-panini {
+  background: #ecdfc0;
+  border-bottom: 2px solid #c94a1a;   /* linha laranja Panini embaixo */
+  padding: 0.5rem 0.9rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+}
+
+/* "GRUPO" — pequeno, espaçado, tons de papel */
+.group-header-label {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 700;
+  font-size: 0.6rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #6b5040;
+  line-height: 1;
+}
+
+/* "A" — grande, laranja Panini, dominante */
+.group-header-letter {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 900;
+  font-size: 1.35rem;
+  color: #c94a1a;
+  line-height: 0.9;
+  letter-spacing: -0.01em;
+}
+
+/* ── Linha de time dentro do card ─────────────────────────────────────── */
+.team-row-panini {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.55rem 0.9rem;
+  border-bottom: 1px solid rgba(200,176,144,.35);
+  text-decoration: none;
+  color: #2a1a08;
+  transition: background 180ms ease, color 180ms ease;
+}
+.team-row-panini:last-child { border-bottom: none; }
+.team-row-panini:hover {
+  background: rgba(201,74,26,.07);
+  color: #c94a1a;
+  text-decoration: none;
+}
+
+.team-flag-panini {
+  width: 28px;
+  height: 20px;
+  object-fit: cover;
+  border-radius: 2px;
+  flex-shrink: 0;
+  box-shadow: 1px 1px 3px rgba(42,26,8,.15);
+}
+
+.team-name-panini {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-size: 0.86rem;
+  flex: 1;
+  line-height: 1.3;
+}
+
+/* Ponto colorido da confederação */
+.conf-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 1px solid rgba(42,26,8,.12);
+}
+.conf-dot.conf-conmebol { background: #2e7d32; }
+.conf-dot.conf-uefa     { background: #1565c0; }
+.conf-dot.conf-caf      { background: #b84c00; }
+.conf-dot.conf-afc      { background: #c62828; }
+.conf-dot.conf-concacaf { background: #6a1a2e; }
+.conf-dot.conf-ofc      { background: #00695c; }
+
+/* ── CTA "Simule a Copa" ──────────────────────────────────────────────── */
+.sim-cta-panini {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 3rem;
+  align-items: center;
+}
+.sim-cta-panini h2 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 900;
+  font-size: 1.9rem;
+  color: #2a1a08;
+  margin-bottom: 0.7rem;
+}
+.sim-cta-panini p {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  color: #6b5040;
+  font-size: 0.92rem;
+  line-height: 1.75;
+  max-width: 480px;
+}
+.sim-features-panini {
+  list-style: none;
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.sim-features-panini li {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-size: 0.88rem;
+  color: #2a1a08;
+  padding-left: 1.2rem;
+  position: relative;
+}
+.sim-features-panini li::before {
+  content: '✦';
+  position: absolute;
+  left: 0;
+  font-size: 0.55rem;
+  color: #c94a1a;
+  top: 0.22em;
+  line-height: 1;
+}
+.sim-card-panini {
+  background: #faf4e4;
+  border: 2px solid #c8b090;
+  border-left: 6px solid #c94a1a;
+  border-radius: 7px;
+  padding: 2rem 1.8rem;
+  text-align: center;
+  min-width: 210px;
+  box-shadow: 3px 4px 0 rgba(42,26,8,.12), 6px 10px 20px rgba(42,26,8,.10);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+.sim-card-panini-icon  { font-size: 2.8rem; margin-bottom: 0.7rem; }
+.sim-card-panini-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 900;
+  font-size: 1.1rem;
+  color: #2a1a08;
+  margin-bottom: 0.2rem;
+}
+.sim-card-panini-sub {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  color: #6b5040;
+  font-size: 0.82rem;
+  font-style: italic;
+  margin-bottom: 1.2rem;
+}
+
+/* ── Estádios ─────────────────────────────────────────────────────────── */
+.stadium-grid-panini {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(195px, 1fr));
+  gap: 1.1rem;
+}
+.stadium-card-panini {
+  background: #faf4e4;
+  border-radius: 7px;
+  border-top: 3px solid #c8b090;
+  border-left: 4px solid #1a4a8a;  /* azul — accent2 */
+  overflow: hidden;
+  box-shadow: 2px 3px 0 rgba(42,26,8,.09), 4px 6px 14px rgba(42,26,8,.08);
+  transition: transform 350ms ease, box-shadow 350ms ease;
+}
+.stadium-card-panini:hover {
+  transform: translateY(-3px);
+  box-shadow: 3px 6px 0 rgba(42,26,8,.12), 6px 12px 22px rgba(42,26,8,.14);
+}
+.stadium-img-panini-wrap {
+  height: 130px;
+  overflow: hidden;
+  position: relative;
+  background: #e4d5b0;
+}
+.stadium-img-panini {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 500ms ease;
+}
+.stadium-card-panini:hover .stadium-img-panini { transform: scale(1.04); }
+.stadium-country-flag {
+  position: absolute;
+  top: 0.5rem; right: 0.5rem;
+  font-size: 1.4rem;
+  filter: drop-shadow(1px 1px 2px rgba(0,0,0,.3));
+}
+.stadium-info-panini { padding: 0.75rem 0.9rem; }
+.stadium-name-panini {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #2a1a08;
+  margin-bottom: 0.15rem;
+}
+.stadium-city-panini {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  color: #6b5040;
+  font-size: 0.78rem;
+  font-style: italic;
+}
+.stadium-cap-panini {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  color: #c94a1a;
+  font-size: 0.78rem;
+  margin-top: 0.2rem;
+  font-weight: 700;
+}
+
+/* ── Footer Panini ────────────────────────────────────────────────────── */
+.footer-panini {
+  background: #2a1a08;
+  border-top: 4px solid #c94a1a;
+  padding: 2rem 0;
+  text-align: center;
+  color: #c8b090;
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-size: 0.88rem;
+}
+.footer-panini-sub {
+  margin-top: 0.3rem;
+  font-size: 0.78rem;
+  opacity: 0.55;
+  font-style: italic;
+}
+
+@media (max-width: 768px) {
+  .sim-cta-panini { grid-template-columns: 1fr; }
+  .groups-grid-panini { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 480px) {
+  .groups-grid-panini { grid-template-columns: 1fr; }
+  .stadium-grid-panini { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   SIMULADOR (grupos.html) — overrides via .page-panini-bg
+   Escopo: tudo dentro do wrapper herda o tema Panini sem renomear classes
+   usadas pelo JavaScript.
+   ════════════════════════════════════════════════════════════════════════ */
+
+.page-panini-bg {
+  background-color: #f2e8cf;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='250'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='250' height='250' filter='url(%23p)' opacity='0.045'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 250px 250px;
+  min-height: 100vh;
+  padding: 2rem 0 4rem;
+}
+
+/* ── Cabeçalho da página ─────────────────────────────────────────────── */
+.page-panini-bg .page-header-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+.page-panini-bg .page-header h1 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 900;
+  color: #2a1a08;
+  font-size: 2rem;
+}
+.page-panini-bg .page-header p {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  color: #6b5040;
+  font-style: italic;
+  margin-top: 0.3rem;
+}
+
+/* ── Barra de progresso ──────────────────────────────────────────────── */
+.page-panini-bg .progress-bar-bg   { background: #dccfa8; border-radius: 4px; }
+.page-panini-bg .progress-bar-fill { background: #c94a1a; }
+.page-panini-bg .progress-text     {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  color: #6b5040;
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+/* ── Tabs dos grupos ─────────────────────────────────────────────────── */
+.page-panini-bg .group-tabs {
+  border-bottom: 2px solid #c8b090;
+  gap: 0.3rem;
+  padding-bottom: 0;
+  margin-bottom: 1.5rem;
+}
+.page-panini-bg .tab-btn {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 900;
+  background: #faf4e4;
+  border: 1.5px solid #c8b090;
+  color: #6b5040;
+  border-radius: 6px 6px 0 0;
+  border-bottom: none;
+  padding: 0.4rem 0.9rem;
+  transition: all 150ms ease;
+  box-shadow: none;
+}
+.page-panini-bg .tab-btn:hover:not(.active) {
+  border-color: #c94a1a;
+  color: #c94a1a;
+  background: #f5ecd8;
+}
+.page-panini-bg .tab-btn.active {
+  background: #c94a1a;
+  border-color: #2a1a08;
+  color: #fffdf5;
+  box-shadow: 2px 0 0 #2a1a08, -1px 0 0 #2a1a08;
+}
+
+/* ── Títulos das seções (Jogos / Classificação) ──────────────────────── */
+.page-panini-bg .panel-section-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 700;
+  color: #c94a1a;
+  font-size: 0.9rem;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid #c8b090;
+  padding-bottom: 0.4rem;
+  margin-bottom: 0.9rem;
+}
+
+/* ── Game card ───────────────────────────────────────────────────────── */
+.page-panini-bg .game-card {
+  background: #faf4e4;
+  border: 1px solid #c8b090;
+  border-left: 4px solid #c8b090;
+  border-radius: 6px;
+  box-shadow: 1px 2px 6px rgba(42,26,8,.08);
+  transition: border-left-color 200ms ease, background 200ms ease;
+}
+.page-panini-bg .game-card.played {
+  border-left-color: #2e6b3a;
+  background: #edf5e4;
+}
+
+/* Meta do jogo */
+.page-panini-bg .game-meta    { color: #6b5040; }
+.page-panini-bg .game-round   { font-family: 'Playfair Display', Georgia, serif; font-weight: 700; color: #c94a1a; }
+.page-panini-bg .game-date,
+.page-panini-bg .game-venue   { color: #a0897a; font-style: italic; }
+
+/* Nomes dos times */
+.page-panini-bg .game-team span {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-size: 0.88rem;
+  color: #2a1a08;
+}
+
+/* Score inputs */
+.page-panini-bg .score-input {
+  background: #fff8ec;
+  border: 2px solid #c8b090;
+  color: #2a1a08;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 1rem;
+}
+.page-panini-bg .score-input:focus { border-color: #c94a1a; outline: none; }
+.page-panini-bg .score-sep         { color: #c8b090; font-weight: 700; }
+
+/* Botão de limpar */
+.page-panini-bg .btn-clear       { color: #c8b090; }
+.page-panini-bg .btn-clear:hover { color: #9b1a1a; }
+
+/* ── Tabela de classificação ─────────────────────────────────────────── */
+.page-panini-bg .standings-table { font-size: 0.87rem; }
+
+.page-panini-bg .standings-table th {
+  background: #ecdfc0;
+  color: #6b5040;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 700;
+  font-size: 0.75rem;
+  border-bottom: 2px solid #c8b090;
+  letter-spacing: 0.04em;
+}
+.page-panini-bg .standings-table td {
+  border-bottom: 1px solid rgba(200,176,144,.35);
+  color: #2a1a08;
+}
+.page-panini-bg .standings-table tr:last-child td { border-bottom: none; }
+
+.page-panini-bg .standings-table .qualify    { background: rgba(46,125,50,.10); }
+.page-panini-bg .standings-table .maybe      { background: rgba(201,74,26,.08); }
+.page-panini-bg .standings-table .qualify td:first-child { border-left: 3px solid #2e7d32; }
+.page-panini-bg .standings-table .maybe   td:first-child { border-left: 3px solid #c94a1a; }
+
+.page-panini-bg .standings-table .team-col a { color: #1a4a8a; }
+.page-panini-bg .standings-table .team-col a:hover { color: #c94a1a; }
+.page-panini-bg .standings-table .pts  { font-weight: 700; color: #2a1a08; }
+.page-panini-bg .standings-table .pos  { color: #6b5040; font-weight: 700; }
+.page-panini-bg .pos-sg { color: #2e7d32; }
+.page-panini-bg .neg-sg { color: #9b1a1a; }
+
+/* Legenda */
+.page-panini-bg .standings-legend { color: #6b5040; font-size: 0.78rem; }
+.page-panini-bg .leg.qualify { background: #2e7d32; }
+.page-panini-bg .leg.maybe   { background: #c94a1a; }
+
+/* ── Rodapé do simulador ─────────────────────────────────────────────── */
+.page-panini-bg .grupos-footer {
+  border-top: 2px solid #c8b090;
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+}
+
+/* Banner CTA "Ver Mata-Mata" — largura total, chamativo */
+.btn-mata-mata-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 1.1rem 2rem;
+  background: #1a4a8a;
+  border: 2px solid #2a1a08;
+  border-radius: 6px;
+  box-shadow: 4px 4px 0 #2a1a08;
+  text-decoration: none;
+  transition: transform 150ms ease, box-shadow 150ms ease;
+  gap: 0.1rem;
+}
+.btn-mata-mata-cta:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 #2a1a08;
+  text-decoration: none;
+}
+.btn-mata-mata-cta:active {
+  transform: translate(4px, 4px);
+  box-shadow: none;
+}
+.btn-mata-mata-label {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.65);
+  line-height: 1;
+}
+.btn-mata-mata-title {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 700;
+  font-size: 1.4rem;
+  color: #ffffff;
+  line-height: 1.1;
+  letter-spacing: 0.01em;
+}
+
+@media (max-width: 768px) {
+  .page-panini-bg .group-panel-inner { grid-template-columns: 1fr; }
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   PÁGINA DE SELEÇÃO (selecao.html)
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* Hero — grande figurinha Panini da seleção */
+.selecao-hero {
+  max-width: 480px;
+  margin: 0 auto 2.5rem;
+  text-align: center;
+  cursor: default;
+}
+.selecao-hero:hover {
+  transform: rotate(0.3deg) translateY(-2px);
+}
+.selecao-hero-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 0.9rem 1.1rem 0.7rem;
+  border-bottom: 1px solid rgba(200,176,144,.4);
+}
+
+/* Stamp com a cor da confederação */
+.selecao-hero.conf-conmebol .panini-stamp { color: #2e7d32; border-color: #2e7d32; }
+.selecao-hero.conf-uefa     .panini-stamp { color: #1565c0; border-color: #1565c0; }
+.selecao-hero.conf-caf      .panini-stamp { color: #b84c00; border-color: #b84c00; }
+.selecao-hero.conf-afc      .panini-stamp { color: #c62828; border-color: #c62828; }
+.selecao-hero.conf-concacaf .panini-stamp { color: #6a1a2e; border-color: #6a1a2e; }
+.selecao-hero.conf-ofc      .panini-stamp { color: #00695c; border-color: #00695c; }
+.selecao-hero-flag {
+  width: auto;
+  height: 90px;
+  margin: 1rem auto 0.7rem;
+  border-radius: 5px;
+  box-shadow: 3px 3px 12px rgba(42,26,8,.25);
+  display: block;
+}
+.selecao-hero-name {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 900;
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
+  color: #2a1a08;
+  line-height: 1.05;
+  margin: 0.2rem 0 0.5rem;
+  padding: 0 1rem;
+}
+.selecao-hero-meta {
+  padding: 0 1rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+.selecao-hero-divider {
+  margin: 0.6rem 1rem;
+}
+
+/* Grid de cards de info */
+.selecao-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+.selecao-card-wide { grid-column: 1 / -1; }
+
+/* Interior de cada card */
+.selecao-card-inner { padding: 1.1rem 1.2rem; }
+.selecao-card-label {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 700;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #6b5040;
+  margin-bottom: 0.7rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid #c8b090;
+}
+.selecao-card-value {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #2a1a08;
+}
+.selecao-card-sub {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-size: 0.82rem;
+  color: #6b5040;
+  font-style: italic;
+  margin-top: 0.2rem;
+}
+
+/* Histórico */
+.selecao-hist-rows { display: flex; flex-direction: column; gap: 0; }
+.selecao-hist-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.38rem 0;
+  border-bottom: 1px solid rgba(200,176,144,.35);
+  font-size: 0.88rem;
+}
+.selecao-hist-row:last-child { border-bottom: none; }
+.selecao-hist-label { font-family: 'Libre Baskerville', Georgia, serif; color: #6b5040; font-style: italic; }
+.selecao-hist-val   { font-family: 'Playfair Display', Georgia, serif; font-weight: 700; color: #2a1a08; }
+.selecao-gold       { color: #c94a1a !important; }
+
+/* Descrição */
+.selecao-desc {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-size: 0.9rem;
+  color: #6b5040;
+  line-height: 1.8;
+  font-style: italic;
+}
+
+/* Convocação */
+.conv-grid-panini {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1.2rem;
+  margin-top: 0.3rem;
+}
+.conv-col-title-panini {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 700;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #c94a1a;
+  margin-bottom: 0.4rem;
+}
+.conv-player-panini {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-size: 0.83rem;
+  color: #2a1a08;
+  padding: 0.22rem 0;
+  border-bottom: 1px solid rgba(200,176,144,.3);
+  line-height: 1.3;
+}
+.conv-player-panini:last-child { border-bottom: none; }
+.conv-pending-panini {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  color: #6b5040;
+  font-style: italic;
+  font-size: 0.9rem;
+  padding: 0.3rem 0;
+}
+
+/* Jogos */
+.selecao-matches { display: flex; flex-direction: column; gap: 0.5rem; }
+.selecao-match-row {
+  background: #f2e8cf;
+  border-radius: 5px;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid #c8b090;
+  border-left: 3px solid #c8b090;
+}
+.selecao-match-row.played { border-left-color: #2e6b3a; background: #edf5e4; }
+.selecao-match-meta {
+  display: flex;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+  font-size: 0.72rem;
+  color: #6b5040;
+  margin-bottom: 0.4rem;
+}
+.selecao-match-round { font-family: 'Playfair Display', Georgia, serif; font-weight: 700; color: #c94a1a; }
+.selecao-match-date,
+.selecao-match-venue { font-family: 'Libre Baskerville', Georgia, serif; font-style: italic; }
+.selecao-match-teams {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.selecao-match-team {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-size: 0.86rem;
+  color: #2a1a08;
+}
+.selecao-match-team:last-child { justify-content: flex-end; }
+.selecao-highlight { color: #c94a1a; font-weight: 700; }
+.selecao-match-score {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 900;
+  font-size: 1.1rem;
+  color: #2a1a08;
+  text-align: center;
+  padding: 0 0.5rem;
+}
+.selecao-match-vs {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-size: 0.8rem;
+  color: #6b5040;
+  font-style: italic;
+  padding: 0 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .selecao-grid { grid-template-columns: 1fr; }
+  .selecao-card-wide { grid-column: 1; }
+  .conv-grid-panini { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 480px) {
+  .conv-grid-panini { grid-template-columns: 1fr 1fr; }
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   MATA-MATA (mata_mata.html) — overrides via .page-panini-bg
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* Títulos de seção */
+.page-panini-bg .section-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 900;
+  font-size: 1.5rem;
+  color: #2a1a08;
+}
+.page-panini-bg .section-sub {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  color: #6b5040;
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+/* Alert "fase incompleta" */
+.page-panini-bg .alert-info {
+  background: #faf4e4;
+  border: 1px solid #c8b090;
+  border-left: 5px solid #1a4a8a;
+  border-radius: 6px;
+  color: #2a1a08;
+}
+.page-panini-bg .alert-info strong { color: #1a4a8a; font-family: 'Playfair Display', Georgia, serif; }
+
+/* Phase nav — mesma estética das tabs de grupo */
+.page-panini-bg .phase-nav {
+  border-bottom: 2px solid #c8b090;
+  gap: 0.3rem;
+  padding-bottom: 0;
+  margin-bottom: 1.5rem;
+}
+.page-panini-bg .phase-btn {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 700;
+  background: #faf4e4;
+  border: 1.5px solid #c8b090;
+  color: #6b5040;
+  border-radius: 6px 6px 0 0;
+  border-bottom: none;
+  transition: all 150ms ease;
+}
+.page-panini-bg .phase-btn:hover:not(.active) {
+  border-color: #c94a1a;
+  color: #c94a1a;
+  background: #f5ecd8;
+}
+.page-panini-bg .phase-btn.active {
+  background: #c94a1a;
+  border-color: #2a1a08;
+  color: #fffdf5;
+  box-shadow: 2px 0 0 #2a1a08, -1px 0 0 #2a1a08;
+}
+
+/* Bracket cards */
+.page-panini-bg .bracket-card {
+  background: #faf4e4;
+  border: 1px solid #c8b090;
+  border-left: 4px solid #c94a1a;
+  border-radius: 6px;
+  box-shadow: 2px 3px 0 rgba(42,26,8,.08), 4px 8px 14px rgba(42,26,8,.08);
+}
+.page-panini-bg .bracket-label {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 700;
+  font-size: 0.68rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #6b5040;
+  margin-bottom: 0.5rem;
+}
+.page-panini-bg .bracket-team {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-size: 0.88rem;
+  color: #2a1a08;
+}
+.page-panini-bg .bracket-team a { color: #1a4a8a; text-decoration: none; }
+.page-panini-bg .bracket-team a:hover { color: #c94a1a; }
+.page-panini-bg .bracket-vs {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-size: 0.75rem;
+  color: #c8b090;
+  font-style: italic;
+  text-align: center;
+  padding: 0.1rem 0;
+}
+.page-panini-bg .bracket-result {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 900;
+  font-size: 1.1rem;
+  color: #2a1a08;
+  text-align: center;
+  margin-top: 0.6rem;
+  border-top: 1px solid #c8b090;
+  padding-top: 0.5rem;
+}
+.page-panini-bg .pen-note {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-size: 0.72rem;
+  color: #6b5040;
+  font-style: italic;
+  font-weight: 400;
+  display: block;
+  margin-top: 0.2rem;
+}
+.page-panini-bg .bracket-pending {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-size: 0.78rem;
+  color: #6b5040;
+  font-style: italic;
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+/* Vencedor / perdedor */
+.page-panini-bg .bk-winner      { font-weight: 700; color: #2a1a08; }
+.page-panini-bg .bk-winner a    { color: #c94a1a !important; font-weight: 700; }
+.page-panini-bg .bk-loser       { opacity: 0.4; }
+.page-panini-bg .unknown        { color: #c8b090; font-style: italic; font-size: 0.83rem; }
+
+/* Score inputs no bracket */
+.page-panini-bg .score-input.sm {
+  background: #fff8ec;
+  border: 1.5px solid #c8b090;
+  color: #2a1a08;
+  border-radius: 4px;
+  font-weight: 700;
+}
+.page-panini-bg .score-input.sm:focus { border-color: #c94a1a; }
+
+/* Tabela de terceiros */
+.page-panini-bg #terceiros-table .standings-table th {
+  background: #ecdfc0;
+  color: #6b5040;
+  font-family: 'Playfair Display', Georgia, serif;
+  border-bottom: 2px solid #c8b090;
+}
+.page-panini-bg #terceiros-table .standings-table td { color: #2a1a08; border-bottom: 1px solid rgba(200,176,144,.35); }
+.page-panini-bg #terceiros-table .standings-table .qualify { background: rgba(46,125,50,.10); }
+.page-panini-bg #terceiros-table .standings-table .qualify td:first-child { border-left: 3px solid #2e7d32; }
+.page-panini-bg #terceiros-table .standings-table .team-col a { color: #1a4a8a; }
+.page-panini-bg #terceiros-table .standings-table .pts { font-weight: 700; color: #2a1a08; }
+
+/* Caixa do campeão — Panini */
+.champion-box-panini {
+  background: #faf4e4;
+  border: 3px solid #c94a1a;
+  border-left: 8px solid #c94a1a;
+  border-radius: 10px;
+  padding: 2.5rem 2rem;
+  max-width: 440px;
+  margin: 2.5rem auto;
+  text-align: center;
+  box-shadow: 5px 5px 0 #2a1a08, 8px 12px 30px rgba(42,26,8,.22);
+}
+.champion-trophy-panini { font-size: 4rem; line-height: 1; }
+.champion-label-panini {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.28em;
+  color: #c94a1a;
+  margin: 0.7rem 0 0.3rem;
+  text-transform: uppercase;
+}
+.champion-flag-panini {
+  width: 100px;
+  margin: 0.8rem auto;
+  border-radius: 4px;
+  box-shadow: 3px 3px 0 rgba(42,26,8,.2);
+  display: block;
+}
+.champion-name-panini {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2rem;
+  font-weight: 900;
+  color: #2a1a08;
+  line-height: 1.1;
+}
+
+/* Modal pênaltis — Panini */
+.modal-overlay { background: rgba(42,26,8,.65); }
+.modal {
+  background: #faf4e4;
+  border: 2px solid #c8b090;
+  border-top: 5px solid #c94a1a;
+  border-radius: 8px;
+  box-shadow: 5px 5px 0 rgba(42,26,8,.25);
+}
+.modal h3 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 900;
+  color: #2a1a08;
+}
+.pen-btn {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  background: #f2e8cf;
+  border: 1.5px solid #c8b090;
+  color: #2a1a08;
+  border-radius: 5px;
+  transition: all 150ms ease;
+}
+.pen-btn:hover {
+  border-color: #c94a1a;
+  background: #faf4e4;
+  color: #c94a1a;
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   COMPONENTE — ESTADO DA COPA (index.html)
+   ════════════════════════════════════════════════════════════════════════ */
+.copa-status-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  max-width: 820px;
+  margin: 0 auto;
+}
+.copa-status-card {
+  padding: 1.5rem;
+}
+.copa-status-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+.copa-status-icon { font-size: 1.8rem; flex-shrink: 0; }
+.copa-status-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 900;
+  font-size: 1rem;
+  color: #2a1a08;
+}
+.copa-status-sub {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-size: 0.78rem;
+  color: #6b5040;
+  font-style: italic;
+}
+.copa-status-badge { margin-left: auto; flex-shrink: 0; }
+
+/* Barra de progresso */
+.copa-progress-track {
+  background: #dccfa8;
+  border-radius: 4px;
+  height: 8px;
+  margin-bottom: 0.45rem;
+  overflow: hidden;
+}
+.copa-progress-fill {
+  background: #c94a1a;
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+.copa-progress-text {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-size: 0.78rem;
+  color: #6b5040;
+  font-style: italic;
+  margin-bottom: 1.2rem;
+}
+
+/* Aviso bloqueado / liberado */
+.copa-alert {
+  border-radius: 5px;
+  padding: 0.65rem 0.9rem;
+  margin-bottom: 1.2rem;
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-size: 0.82rem;
+  font-style: italic;
+}
+.copa-alert--warn {
+  background: #f0e4c8;
+  border: 1px solid #c8b090;
+  border-left: 3px solid #c94a1a;
+  color: #6b5040;
+}
+.copa-alert--ok {
+  background: #d8ead8;
+  border: 1px solid #2e6b3a;
+  border-left: 3px solid #2e6b3a;
+  color: #2e6b3a;
+  font-style: normal;
+}
+
+/* Modal de estádio */
+.estadio-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  background: rgba(42,26,8,.72);
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+.estadio-modal-overlay.open { display: flex; }
+.estadio-modal {
+  background: #faf4e4;
+  border: 2px solid #c8b090;
+  border-top: 5px solid #c94a1a;
+  border-radius: 8px;
+  box-shadow: 5px 5px 0 rgba(42,26,8,.25), 0 20px 60px rgba(42,26,8,.35);
+  max-width: 520px;
+  width: 100%;
+  overflow: hidden;
+  animation: modalIn 220ms cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes modalIn {
+  from { transform: scale(0.92) translateY(12px); opacity: 0; }
+  to   { transform: scale(1) translateY(0); opacity: 1; }
+}
+.estadio-modal-img {
+  width: 100%; height: 200px;
+  object-fit: cover;
+  display: block;
+  background: #e4d5b0;
+}
+.estadio-modal-body { padding: 1.4rem 1.5rem 1.5rem; }
+.estadio-modal-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.1rem;
+}
+.estadio-modal-nome {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 900;
+  font-size: 1.3rem;
+  color: #2a1a08;
+  line-height: 1.15;
+  margin: 0.35rem 0 0.2rem;
+}
+.estadio-modal-cidade {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-size: 0.85rem;
+  color: #6b5040;
+  font-style: italic;
+}
+.estadio-modal-close {
+  background: none;
+  border: none;
+  font-size: 1.6rem;
+  cursor: pointer;
+  color: #6b5040;
+  padding: 0;
+  line-height: 1;
+  transition: color 150ms ease;
+  flex-shrink: 0;
+}
+.estadio-modal-close:hover { color: #c94a1a; }
+.estadio-modal-stats {
+  display: flex;
+  gap: 0.9rem;
+}
+.estadio-stat {
+  background: #f2e8cf;
+  border: 1px solid #c8b090;
+  border-radius: 5px;
+  padding: 0.65rem 0.9rem;
+}
+.estadio-stat--cap { text-align: center; min-width: 100px; }
+.estadio-stat--jogos { flex: 1; }
+.estadio-stat-val {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 900;
+  font-size: 1.15rem;
+  color: #c94a1a;
+}
+.estadio-stat-lbl {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-size: 0.72rem;
+  color: #6b5040;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.25rem;
+}
+.estadio-stat-txt {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-size: 0.85rem;
+  color: #2a1a08;
+  line-height: 1.45;
+}
+
+@media (max-width: 640px) {
+  .copa-status-grid { grid-template-columns: 1fr; }
+  .estadio-modal-stats { flex-direction: column; }
+  .estadio-stat--cap { text-align: left; }
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   BRACKET CASCADE — mata_mata.html
+   ════════════════════════════════════════════════════════════════════════ */
+
+.bk-outer {
+  --bk-bu:     74px;    /* base unit: altura de um slot R32 */
+  --bk-cw:     186px;   /* largura de cada coluna/card */
+  --bk-gap:    28px;    /* gap entre colunas (espaço das linhas conectoras) */
+  --bk-line:   #c8b090; /* cor das linhas */
+  overflow-x: auto;
+  overflow-y: visible;
+  padding: 0.25rem 0 2rem;
+  margin: 1.5rem 0;
+}
+
+.bk-stage {
+  display: inline-flex;
+  flex-direction: column;
+  min-width: max-content;
+}
+
+/* ── Cabeçalhos das rodadas ── */
+.bk-headers {
+  display: flex;
+  align-items: flex-end;
+  margin-bottom: 0.6rem;
+}
+
+.bk-col-hdr {
+  width: var(--bk-cw);
+  flex-shrink: 0;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #8a7060;
+  border-bottom: 2px solid var(--bk-line);
+  padding-bottom: 0.3rem;
+}
+
+.bk-hdr-gap {
+  width: var(--bk-gap);
+  flex-shrink: 0;
+}
+
+/* ── Corpo do bracket ── */
+.bk-body {
+  display: flex;
+  align-items: flex-start;
+}
+
+.bk-col {
+  display: flex;
+  flex-direction: column;
+  width: var(--bk-cw);
+  flex-shrink: 0;
+}
+
+.bk-body-gap {
+  width: var(--bk-gap);
+  flex-shrink: 0;
+}
+
+/* ── Slots (alturas dobram a cada rodada) ── */
+.bk-slot {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 0;
+  box-sizing: border-box;
+  overflow: visible;
+}
+
+.bk-col--r32   .bk-slot { height: var(--bk-bu); }
+.bk-col--r16   .bk-slot { height: calc(var(--bk-bu) * 2); }
+.bk-col--qf    .bk-slot { height: calc(var(--bk-bu) * 4); }
+.bk-col--sf    .bk-slot { height: calc(var(--bk-bu) * 8); }
+.bk-col--final .bk-slot { height: calc(var(--bk-bu) * 16); }
+
+/* ── Linhas conectoras ── */
+/* Traço horizontal da direita do card até o gap */
+.bk-slot-conn::after {
+  content: '';
+  position: absolute;
+  left: 100%;
+  top: calc(50% - 1px);
+  width: var(--bk-gap);
+  height: 2px;
+  background: var(--bk-line);
+  pointer-events: none;
+}
+
+/* Traço vertical descendo (jogo de cima do par) */
+.bk-slot-conn.bk-slot--top::before {
+  content: '';
+  position: absolute;
+  left: calc(100% + var(--bk-gap) - 2px);
+  top: 50%;
+  width: 2px;
+  height: calc(50% + 2px);
+  background: var(--bk-line);
+  pointer-events: none;
+}
+
+/* Traço vertical subindo (jogo de baixo do par) */
+.bk-slot-conn.bk-slot--bot::before {
+  content: '';
+  position: absolute;
+  left: calc(100% + var(--bk-gap) - 2px);
+  bottom: 50%;
+  width: 2px;
+  height: calc(50% + 2px);
+  background: var(--bk-line);
+  pointer-events: none;
+}
+
+/* ── Card compacto do bracket ── */
+.bkc {
+  background: #faf4e4;
+  border: 1.5px solid #d5c5a0;
+  border-radius: 5px;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  box-shadow: 1px 2px 5px rgba(42,26,8,.10);
+}
+
+.bkc-lbl {
+  font-size: 0.52rem;
+  font-family: var(--font-display);
+  letter-spacing: 0.07em;
+  color: #a09070;
+  text-align: center;
+  padding: 2px 0 1px;
+  text-transform: uppercase;
+  border-bottom: 1px solid #e8d8b8;
+  background: #f5eed8;
+}
+
+.bkc-team {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 6px 3px 5px;
+  min-height: 22px;
+}
+
+.bkc-team.bkc-win {
+  background: rgba(46,125,50,.08);
+}
+
+.bkc-team.bkc-lose {
+  opacity: 0.38;
+}
+
+.bkc-flag {
+  width: 18px;
+  height: 12px;
+  object-fit: cover;
+  border-radius: 2px;
+  border: 0.5px solid rgba(0,0,0,.12);
+  flex-shrink: 0;
+}
+
+.bkc-name {
+  font-size: 0.67rem;
+  font-family: var(--font-body);
+  color: #2a1a08;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 105px;
+}
+
+.bkc-team.bkc-win .bkc-name {
+  font-weight: 700;
+}
+
+.bkc-score {
+  font-size: 0.8rem;
+  font-weight: 900;
+  font-family: var(--font-display);
+  color: #2a1a08;
+  margin-left: auto;
+  min-width: 14px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.bkc-input {
+  width: 28px;
+  margin-left: auto;
+  flex-shrink: 0;
+  padding: 1px 3px;
+  font-size: 0.72rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  border: 1px solid #c8b090;
+  border-radius: 3px;
+  background: #fff9ee;
+  color: #2a1a08;
+  text-align: center;
+  -moz-appearance: textfield;
+}
+.bkc-input::-webkit-outer-spin-button,
+.bkc-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+.bkc-input:focus {
+  outline: none;
+  border-color: #c94a1a;
+  background: #fff;
+  box-shadow: 0 0 0 2px rgba(201,74,26,.15);
+}
+
+.bkc-div {
+  height: 1px;
+  background: #e0d0b0;
+  margin: 0;
+}
+
+.bkc-tbd {
+  font-size: 0.62rem;
+  color: #a09070;
+  font-style: italic;
+  padding: 2px 4px;
+}
+
+.bkc-pen {
+  font-size: 0.58rem;
+  text-align: center;
+  color: #c94a1a;
+  padding: 1px 5px 2px;
+  font-style: italic;
+  background: rgba(201,74,26,.05);
+  border-top: 1px solid #ead8b8;
+}
+
+/* ── Salvo: feedback visual ── */
+.bkc.bkc-saved {
+  border-color: #2e7d32;
+  box-shadow: 0 0 0 2px rgba(46,125,50,.25);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+/* ── Rodapé: 3º lugar + campeão ── */
+.bk-footer {
+  display: flex;
+  gap: 2.5rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 2px solid #d5c5a0;
+}
+
+/* ── Coluna Final + 3º Lugar (dentro do cascade) ── */
+.bk-col--finais {
+  width: var(--bk-cw);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: calc(var(--bk-bu) * 16);
+}
+
+.bk-finais-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+  width: 100%;
+}
+
+.bk-finais-bloco {
+  width: 100%;
+}
+
+.bk-finais-label {
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #8a7060;
+  text-align: center;
+  margin-bottom: 0.35rem;
+}
+
+.bk-finais-label--sub {
+  font-size: 0.55rem;
+  font-style: italic;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  color: #a09070;
+}
+
+.bk-finais-sep {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 0.5rem;
+  margin: 0.3rem 0;
+}
+
+.bk-finais-sep::before,
+.bk-finais-sep::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #d5c5a0;
+}
+
+.bk-finais-sep span {
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #c8b090;
+  white-space: nowrap;
+}
+
+/* ── Seção 3º lugar (legacy) ── */
+.bk-terceiro-section {
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 2px solid #d5c5a0;
+  text-align: center;
+}
+
+.bk-terceiro-header {
+  margin-bottom: 1.2rem;
+}
+
+.bk-terceiro-titulo {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #2a1a08;
+  margin: 0.4rem 0 0.2rem;
+}
+
+.bk-terceiro-sub {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-style: italic;
+  color: #8a7060;
+}
+
+.bk-terceiro-card {
+  max-width: 220px;
+  margin: 0 auto;
+}
+
+/* legacy */
+.bk-third {
+  flex: 0 0 auto;
+}
+
+.bk-third-title {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #8a7060;
+  border-bottom: 2px solid #c8b090;
+  padding-bottom: 0.3rem;
+  margin-bottom: 0.5rem;
+  width: var(--bk-cw, 186px);
+}
