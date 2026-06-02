@@ -1,0 +1,52 @@
+name: CI — Testes + Docker Hub
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Rodar Testes
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Instalar dependências
+        run: pip install -r requirements.txt
+
+      - name: Rodar testes
+        run: python -m pytest tests/ -v
+
+  docker:
+    name: Build e Push Docker Hub
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Login no Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build e Push da imagem
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            eliahushammah/world-cup-2026:latest
+            eliahushammah/world-cup-2026:${{ github.sha }}
