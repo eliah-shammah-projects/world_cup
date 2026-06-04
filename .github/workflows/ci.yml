@@ -62,7 +62,7 @@ jobs:
         run: |
           echo "${{ secrets.EC2_KEY }}" > /tmp/key.pem
           chmod 600 /tmp/key.pem
-          ssh -i /tmp/key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "
+          ssh -i /tmp/key.pem -o StrictHostKeyChecking=no ec2-user@13.51.172.100 "
             docker pull eliahushammah/world-cup-2026:latest &&
             docker stop world-cup || true &&
             docker rm world-cup || true &&
