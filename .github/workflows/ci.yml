@@ -59,18 +59,12 @@ jobs:
 
     steps:
       - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_KEY }}
-          debug: true
-          script: |
-            docker pull eliahushammah/world-cup-2026:latest
-            docker stop world-cup 2>/dev/null || true
-            docker rm world-cup 2>/dev/null || true
-            docker run -d \
-              --name world-cup \
-              --restart unless-stopped \
-              -p 5010:5010 \
-              eliahushammah/world-cup-2026:latest
+        run: |
+          echo "${{ secrets.EC2_KEY }}" > /tmp/key.pem
+          chmod 600 /tmp/key.pem
+          ssh -i /tmp/key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "
+            docker pull eliahushammah/world-cup-2026:latest &&
+            docker stop world-cup || true &&
+            docker rm world-cup || true &&
+            docker run -d --name world-cup --restart unless-stopped -p 5010:5010 eliahushammah/world-cup-2026:latest
+          "
