@@ -50,3 +50,26 @@ jobs:
           tags: |
             eliahushammah/world-cup-2026:latest
             eliahushammah/world-cup-2026:${{ github.sha }}
+
+  deploy:
+    name: Deploy no EC2
+    runs-on: ubuntu-latest
+    needs: docker
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            docker pull eliahushammah/world-cup-2026:latest
+            docker stop world-cup 2>/dev/null || true
+            docker rm world-cup 2>/dev/null || true
+            docker run -d \
+              --name world-cup \
+              --restart unless-stopped \
+              -p 5010:5010 \
+              eliahushammah/world-cup-2026:latest
